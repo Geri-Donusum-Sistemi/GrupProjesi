@@ -27,10 +27,40 @@ body.bg-world::before {
 }
 
 /* Ensure content sits above the background/overlay */
-.container, header, nav, footer {
+.container, nav, footer {
   position: relative;
   z-index: 1;
 }
+
+/* Keep header visually above any page overlays (dark/light) */
+header {
+  position: relative;
+  z-index: 9999;
+  background: #2e7d32 !important;
+  color: #fff;
+  -webkit-font-smoothing:antialiased;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* Strongly enforce header visuals so dark-mode does not change them */
+/* Use specific selectors and !important to override theme rules */
+header, header * {
+  color: #ffffff !important;
+}
+header {
+  background-color: #2e7d32 !important;
+}
+/* Keep auth buttons appearance inside header consistent */
+header .auth-buttons button {
+  background: #ffffff !important;
+  color: #2e7d32 !important;
+  border: none !important;
+}
+header .auth-buttons button.signup {
+  background: #fbc02d !important;
+  color: #000 !important;
+}
+header .user-info button { background: #ffffff !important; color: #2e7d32 !important; }
 
 /* ---------- Parallax Hero Styles ---------- */
 .parallax-hero {
@@ -46,15 +76,16 @@ body.bg-world::before {
 
 .parallax-hero .layer {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
+  /* expand layers beyond container bounds to hide any moving-edge gaps */
+  inset: -8%;
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
   will-change: transform;
-  transform: translateY(0);
+  transform: translateY(0) scale(1.12); /* larger upscale to ensure no edges show */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
 }
 
 .parallax-hero .layer-back {
@@ -139,3 +170,225 @@ body.bg-world {
   background-image: url("https://images.unsplash.com/photo-1502920917128-1aa500764b0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2400&q=80");
 }
 */
+
+/* ---------- Dark theme variables and overrides ---------- */
+:root {
+  --bg-color: #ffffff;
+  --panel-bg: #ffffff;
+  --text-color: #222222;
+  --muted: #666666;
+  --site-green: #2e7d32; /* header color preserved in dark mode */
+}
+
+.dark {
+  --bg-color: #0f1720;
+  --panel-bg: #0b1220;
+  --text-color: #e6eef6;
+  --muted: #9fb0c8;
+}
+
+/* Apply theme-aware colors to main elements */
+body, .container, header, nav, footer {
+  background-color: transparent; /* keep image but panels use panel-bg */
+  color: var(--text-color);
+}
+
+.container {
+  background: var(--panel-bg);
+}
+
+/* Keep header green regardless of theme */
+header {
+  background: var(--site-green) !important;
+}
+
+/* Force header and top nav backgrounds to remain unchanged in dark mode */
+header { background: #2e7d32 !important; }
+nav { background: #0288d1 !important; color: #ffffff !important; }
+
+/* Parallax hero should sit above the body overlay so its visuals aren't dimmed */
+.parallax-hero { position: relative; z-index: 1100; overflow: hidden; background-color: #08121a; /* dark fallback behind layers to hide any tiny gaps */ }
+.parallax-hero .layer { z-index: 1090 !important; filter: none !important; opacity: 1 !important; background-size: cover !important; }
+.parallax-hero .hero-content { position: relative; z-index: 1110; }
+
+/* Prevent any white/transparent edges becoming visible when layers translate —
+   the layers are slightly scaled and positioned above overlay. */
+.parallax-hero .layer-back,
+.parallax-hero .layer-mid,
+.parallax-hero .layer-front {
+  transform-origin: center center;
+}
+
+/* Overlay adjustments for dark mode to improve contrast */
+body.bg-world::before {
+  background: rgba(255,255,255,0.55);
+}
+.dark body.bg-world::before {
+  /* keep the very top area clear so header/parallax remain visually consistent */
+  background: linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(2,6,12,0.55) 260px);
+}
+
+/* Kutu detay kutucukları (açılır) */
+.kutu-details {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.35s ease, padding 0.25s ease;
+  border-radius: 6px;
+  margin-top: 10px;
+  padding: 0 12px;
+}
+.kutu-details.open {
+  max-height: 500px;
+  padding: 12px;
+}
+.kutu-details h3 { margin: 0 0 6px 0; }
+.kutu-details p, .kutu-details li { margin: 6px 0; }
+
+.kutu-details.kagit { background: #e3f2fd; color: #0d47a1; border-left: 6px solid #1976d2; }
+.kutu-details.plastik { background: #fff9e6; color: #8a6d00; border-left: 6px solid #fbc02d; }
+.kutu-details.cam { background: #e8f5e9; color: #1b5e20; border-left: 6px solid #388e3c; }
+.kutu-details.metal { background: #f5f7f8; color: #263238; border-left: 6px solid #616161; }
+.kutu-details.organik { background: #f3e9e5; color: #4e342e; border-left: 6px solid #8d6e63; }
+.kutu-details.siyah { background: #efefef; color: #1b1b1b; border-left: 6px solid #212121; }
+
+/* Theme switch small toggle */
+.theme-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+}
+.theme-switch input { display: none; }
+.theme-switch .switch-slider {
+  width: 40px;
+  height: 22px;
+  background: #cfd8dc;
+  border-radius: 999px;
+  position: relative;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+}
+.theme-switch .switch-slider::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  left: 2px;
+  top: 2px;
+  border-radius: 50%;
+  background: #1f2937; /* dark knob on light */
+  transition: transform 0.22s ease, background 0.22s ease;
+}
+.theme-switch input:checked + .switch-slider {
+  background: #1f2937;
+}
+.theme-switch input:checked + .switch-slider::after {
+  transform: translateX(18px);
+  background: #ffffff; /* light knob on dark */
+}
+
+/* ensure switch is visible on header */
+.auth-area { display: flex; align-items: center; gap: 8px; }
+
+/* ---------- Micro-interactions & Animations ---------- */
+html { scroll-behavior: smooth; }
+
+/* Hero subtle float */
+.hero-float { animation: gd-hero-float 6s ease-in-out infinite; }
+@keyframes gd-hero-float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+
+/* Reveal-on-scroll baseline */
+.reveal { opacity: 0; transform: translateY(12px); transition: opacity 0.6s cubic-bezier(.2,.8,.2,1), transform 0.6s cubic-bezier(.2,.8,.2,1); will-change: opacity, transform; }
+.reveal.in-view { opacity: 1; transform: none; }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero-float { animation: none !important; }
+  .reveal { transition: none !important; transform: none !important; opacity: 1 !important; }
+  .kutu, .cta { transition: none !important; }
+}
+
+/* Kutu micro-interaction */
+.kutu { transition: transform 280ms cubic-bezier(.2,.8,.2,1), box-shadow 280ms; will-change: transform; }
+.kutu:hover, .kutu:focus { transform: translateY(-8px) scale(1.02); box-shadow: 0 10px 28px rgba(8,20,30,0.12); }
+.kutu:active { transform: translateY(-2px) scale(1.01); }
+
+/* CTA buttons */
+.cta { transition: transform 220ms cubic-bezier(.2,.8,.2,1), box-shadow 220ms; }
+.cta:hover, .cta:focus { transform: translateY(-4px); box-shadow: 0 12px 26px rgba(0,0,0,0.16); }
+
+/* Nav underline animation */
+nav a { position: relative; padding-bottom: 6px; }
+nav a::after { content: ''; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 0; height: 3px; background: rgba(255,255,255,0.95); border-radius: 2px; transition: width 260ms cubic-bezier(.2,.8,.2,1); }
+nav a:hover::after, nav a:focus::after { width: 60%; }
+
+/* Wrapper allowing a hover panel to appear under the nav */
+.nav-with-panel { position: relative; }
+.hover-panel {
+  display: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  /* allow JS to set a sensible desktop width; have a roomy minimum */
+  width: auto;
+  min-width: 300px;
+  max-width: 92%;
+  background: var(--panel-bg, #ffffff);
+  color: var(--text-color, #222);
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(8,20,30,0.12);
+  z-index: 10005;
+  font-size: 0.98rem;
+  line-height: 1.28;
+}
+.hover-panel h2 { margin: 0 0 8px 0; color: #1b5e20; font-size: 1.05rem; }
+.hover-panel ul { margin: 0; padding-left: 18px; }
+.hover-panel.visible { display: block; }
+
+/* On small screens, make panel full width under nav */
+@media (max-width: 720px) {
+  .hover-panel { left: 6%; transform: none; width: 88%; top: calc(100% + 8px); }
+}
+
+/* Button focus outline (accessibility) */
+button:focus, a:focus { outline: 3px solid rgba(46,125,50,0.12); outline-offset: 3px; }
+
+/* Mini boxes row inside hover panels */
+.mini-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+.mini-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; min-width: 120px; }
+.mini-kutu { width: 34px; height: 34px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.82rem; box-shadow: 0 6px 16px rgba(8,20,30,0.06); }
+.mini-label { font-weight: 700; color: var(--text-color, #222); font-size: 0.95rem; }
+
+/* Color mapping for mini boxes (mirror main `.kutu` colors) */
+.mini-kutu.kagit { background: #1976d2; color: #fff; }
+.mini-kutu.plastik { background: #fbc02d; color: #000; }
+.mini-kutu.cam { background: #388e3c; color: #fff; }
+.mini-kutu.metal { background: #616161; color: #fff; }
+.mini-kutu.organil { background: #8d6e63; color: #fff; } /* small typo-safe class (use .organik below) */
+.mini-kutu.organik { background: #8d6e63; color: #fff; }
+.mini-kutu.siyah { background: #212121; color: #fff; }
+.mini-kutu.tibbi { background: #ff9800; color: #000; }
+.mini-kutu.tibbi-bag { background: #d32f2f; color: #fff; border-radius: 50%; width: 18px; height: 18px; }
+.mini-kutu.tehlike { background: rgba(255,255,255,0.06); color: #333; border: 2px dashed #9e9e9e; }
+
+/* Main kutu color classes (in case inline styles don't include them) */
+.kagit { background: #1976d2; }
+.plastik { background: #fbc02d; color:#000; }
+.cam { background: #388e3c; }
+.metal { background: #616161; }
+.organik { background: #8d6e63; }
+.siyah { background: #212121; }
+.tibbi { background: #ff9800; color: #000; }
+.tibbi-bag { background: #d32f2f; color: #fff; }
+.seffaf { background: linear-gradient(90deg, rgba(255,255,255,0.0), rgba(255,255,255,0.02)); border: 2px dashed rgba(0,0,0,0.08); color: #333; }
+
+/* Details styling for tibbi/seffaf */
+.kutu-details.tibbi { background: #fff3e0; color: #3e2f00; border-left: 6px solid #ff9800; }
+.kutu-details.seffaf { background: #fbfbfd; color: #2c2c2c; border-left: 6px dashed #9e9e9e; }
+
+

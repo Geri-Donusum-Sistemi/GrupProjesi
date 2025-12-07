@@ -56,12 +56,14 @@
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 10010; /* raised above header (header z-index: 9999) */
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
         }
         .modal.show {
             display: flex;
@@ -75,6 +77,8 @@
             width: 90%;
             max-width: 400px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 10011; /* ensure modal content sits above header */
         }
         .modal-content h2 {
             margin-top: 0;
@@ -203,9 +207,15 @@
         <h1>♻ Geri Dönüşüm Bilgilendirme Sistemi</h1>
         <p>Çevreyi korumak için küçük adımlar, büyük etkiler.</p>
     </div>
-    <div class="auth-buttons" id="authButtons">
-        <button onclick="openLoginModal()">Giriş Yap</button>
-        <button class="signup" onclick="openSignupModal()">Kayıt Ol</button>
+    <div class="auth-area">
+        <div class="auth-buttons" id="authButtons">
+            <button onclick="openLoginModal()">Giriş Yap</button>
+            <button class="signup" onclick="openSignupModal()">Kayıt Ol</button>
+        </div>
+        <label class="theme-switch" title="Koyu temayı aç/kapa">
+            <input type="checkbox" id="themeToggle" aria-label="Koyu tema">
+            <span class="switch-slider"></span>
+        </label>
     </div>
     <div class="user-info" id="userInfo">
         <span id="username"></span>
@@ -354,22 +364,37 @@ window.onclick = function(event) {
 }
 </script>
 
-<nav>
-    <a href="#neden">Neden Geri Dönüşüm?</a>
-    <a href="#turler">Atık Türleri</a>
-    <a href="#renkler">Kutuların Renkleri</a>
-    <a href="/bilgi">Geri Dönüşüm Nedir?</a>
-    <a href="#faaliyetler">Faaliyetler</a>
-    <a href="#iletisim">İletişim</a>
-    <a href="#ekip">Proje Ekibi</a>
-</nav>
+<div class="nav-with-panel">
+    <nav>
+        <a href="#neden" id="link-neden">Neden Geri Dönüşüm?</a>
+        <a href="#turler" id="link-turler">Atık Türleri</a>
+        <a href="#renkler">Kutuların Renkleri</a>
+        <a href="/bilgi">Geri Dönüşüm Nedir?</a>
+        <a href="#faaliyetler">Faaliyetler</a>
+        <a href="#iletisim">İletişim</a>
+        <a href="#ekip">Proje Ekibi</a>
+    </nav>
+
+    <!-- Hover panel: hidden by default, shown when hovering the "Neden" link -->
+    <div id="hover-neden" class="hover-panel" aria-hidden="true">
+        <h2>Neden Geri Dönüşüm Önemlidir?</h2>
+        <ul>
+            <li>Doğal kaynakların daha verimli kullanılmasını sağlar.</li>
+            <li>Enerji tasarrufu sağlar.</li>
+            <li>Çöp miktarını ve çevre kirliliğini azaltır.</li>
+            <li>Gelecek nesiller için daha temiz bir dünya bırakmamıza yardım eder.</li>
+        </ul>
+    </div>
+    
+    <!-- Hover panel for Atık Türleri removed per user request (no hover on nav link) -->
+</div>
 
 <!-- Parallax hero: kuş bakışı / geri dönüşüm temalı görsel ile hareketli arka plan -->
 <section class="parallax-hero">
     <div class="layer layer-back" aria-hidden="true"></div>
     <div class="layer layer-mid" aria-hidden="true"></div>
     <div class="layer layer-front" aria-hidden="true"></div>
-    <div class="hero-content">
+    <div class="hero-content hero-float">
         <h1>Geri Dönüşümle Geleceğe Adım At</h1>
         <p>Doğa için küçük bir adım atın — bugün geri dönüştürmeye başlayın.</p>
         <div style="display: flex; gap: 10px; justify-content: center;">
@@ -379,33 +404,158 @@ window.onclick = function(event) {
     </div>
 </section>
 
-<div class="container" id="neden">
-    <h2>Neden Geri Dönüşüm Önemlidir?</h2>
-    <ul>
-        <li>Doğal kaynakların daha verimli kullanılmasını sağlar.</li>
-        <li>Enerji tasarrufu sağlar.</li>
-        <li>Çöp miktarını ve çevre kirliliğini azaltır.</li>
-        <li>Gelecek nesiller için daha temiz bir dünya bırakmamıza yardım eder.</li>
-    </ul>
-</div>
+<script>
+// Generic helper to attach a hover/focus panel to a nav link
+;(function(){
+    function attachHoverPanel(linkId, panelId) {
+        const link = document.getElementById(linkId);
+        const panel = document.getElementById(panelId);
+        if (!link || !panel) return;
 
-<div class="container" id="turler">
-    <h2>Geri Dönüştürülebilen Atık Türleri</h2>
-    <ul>
-        <li><b>Kağıt:</b> Gazete, defter, karton kutu, dergi…</li>
-        <li><b>Plastik:</b> Su şişesi, poşet, plastik kaplar…</li>
-        <li><b>Cam:</b> Şişe, kavanoz, cam şişe ambalajları…</li>
-        <li><b>Metal:</b> Konserve kutuları, içecek kutuları…</li>
-    </ul>
-</div>
+        let hideTimeout = null;
+
+        function position() {
+            const rect = link.getBoundingClientRect();
+            const navEl = link.closest('nav') || document.querySelector('nav');
+            const navRect = navEl.getBoundingClientRect();
+            const scrollX = window.scrollX || window.pageXOffset;
+            const scrollY = window.scrollY || window.pageYOffset;
+            if (window.innerWidth > 720) {
+                // Choose a comfortable panel width (responsive but not tiny)
+                const viewportWidth = window.innerWidth;
+                const maxAllowed = Math.min(920, Math.floor(viewportWidth * 0.92));
+                const preferred = Math.min(520, maxAllowed); // keep panels readable
+                const panelWidth = Math.max(300, preferred);
+
+                panel.style.width = panelWidth + 'px';
+
+                // Center the panel horizontally under the link, but clamp inside viewport
+                let left = rect.left + scrollX + (rect.width / 2) - (panelWidth / 2);
+                const minLeft = 8 + scrollX;
+                const maxLeft = scrollX + viewportWidth - panelWidth - 8;
+                if (left < minLeft) left = minLeft;
+                if (left > maxLeft) left = maxLeft;
+
+                panel.style.left = left + 'px';
+                panel.style.top = (navRect.bottom + scrollY) + 'px';
+                panel.style.transform = 'none';
+            } else {
+                panel.style.width = '';
+                panel.style.left = '';
+                panel.style.top = '';
+            }
+        }
+
+        function show() {
+            clearTimeout(hideTimeout);
+            position();
+            panel.classList.add('visible');
+            panel.setAttribute('aria-hidden','false');
+        }
+        function hide() {
+            hideTimeout = setTimeout(()=>{
+                panel.classList.remove('visible');
+                panel.setAttribute('aria-hidden','true');
+            }, 140);
+        }
+
+        link.addEventListener('mouseenter', show);
+        link.addEventListener('focus', show);
+        link.addEventListener('mouseleave', hide);
+        link.addEventListener('blur', hide);
+
+        panel.addEventListener('mouseenter', show);
+        panel.addEventListener('mouseleave', hide);
+        panel.addEventListener('focusin', show);
+        panel.addEventListener('focusout', hide);
+
+        window.addEventListener('resize', function(){ if (panel.classList.contains('visible')) position(); });
+        window.addEventListener('scroll', function(){ if (panel.classList.contains('visible')) position(); }, { passive: true });
+    }
+
+    attachHoverPanel('link-neden', 'hover-neden');
+})();
+</script>
+
+<!-- Original '#neden' section moved into hover panel above; removed from page flow -->
+
+<!-- 'turler' content moved into hover panel; removed from page flow -->
 
 <div class="container" id="renkler">
     <h2>Geri Dönüşüm Kutularının Renkleri</h2>
     <div class="kutular">
-        <div class="kutu kagit">MAVİ<br>Kağıt Atıklar</div>
-        <div class="kutu plastik">SARI<br>Plastik Atıklar</div>
-        <div class="kutu cam">YEŞİL<br>Cam Atıklar</div>
-        <div class="kutu metal">GRİ<br>Metal Atıklar</div>
+        <div class="kutu kagit">MAVİ<br>Kağıt / Karton</div>
+        <div class="kutu plastik">SARI<br>Plastik</div>
+        <div class="kutu cam">YEŞİL<br>Cam</div>
+        <div class="kutu metal">GRİ<br>Metal</div>
+        <div class="kutu organik">KAHVERENGİ<br>Organik</div>
+        <div class="kutu siyah">SİYAH<br>Geri Dönüşemeyen</div>
+        <div class="kutu tibbi">TURUNCU<br>Tıbbi (kova)</div>
+        <div class="kutu tibbi-bag">KIRMIZI<br>Tıbbi (poşet)</div>
+        <div class="kutu seffaf">ŞEFFAF<br>Tehlikeli / Elektronik</div>
+    </div>
+    <!-- Detay panelleri: kutulara tıklayınca açılacak bilgiler -->
+    <div id="kagitDetails" class="kutu-details kagit" aria-hidden="true">
+        <h3>Mavi Kutuda Neler Atılır?</h3>
+        <ul>
+            <li>Gazete ve dergiler</li>
+            <li>Karton kutular (temiz ve kuru)</li>
+            <li>Defter, ciltli olmayan kitaplar</li>
+            <li>Kağıt torbalar ve poşetler</li>
+            <li>Ofis kağıtları, fotokopi kağıdı</li>
+            <li>Kağıt ambalajlar (içerikleri boşaltılmış ve temizlenmiş)</li>
+        </ul>
+        <h3>Neden Bunları Atmalıyız?</h3>
+        <p>Kağıt materyaller geri dönüştürüldüğünde ağaç ihtiyacı azalır, enerji tasarrufu sağlanır ve atık miktarı küçülür. Kirli veya yağlı kağıtlar (ör. yağlı pizza kutuları) geri dönüşüm sürecini bozabileceği için genellikle ayrılmalıdır.</p>
+    </div>
+
+    <div id="plastikDetails" class="kutu-details plastik" aria-hidden="true">
+        <h3>Sarı Kutuda Neler Atılır?</h3>
+        <ul>
+            <li>Plastik su ve içecek şişeleri (boş ve kapağı çıkarılmış)</li>
+            <li>Plastik kaplar ve kutular (içerikler temizlenmiş)</li>
+            <li>Plastik torbalar (biriktirilip temizlenmiş)</li>
+            <li>Ambalaj plastikleri (etiket ve kir varsa temizlenmiş)</li>
+        </ul>
+        <h3>Neden Bunları Atmalıyız?</h3>
+        <p>Plastikler uygun şekilde ayrıldığında tekrar işlenebilir; doğada çok uzun süre kalırlar ve doğru geri dönüşüm çevre kirliliğini azaltır. Kirli plastikler geri dönüşüm işlemini zorlaştırır.</p>
+    </div>
+
+    <div id="camDetails" class="kutu-details cam" aria-hidden="true">
+        <h3>Yeşil Kutuda Neler Atılır?</h3>
+        <ul>
+            <li>Cam şişeler ve kavanozlar</li>
+            <li>Cam ambalajlar (cerrahi cam, porselen vb. değil)</li>
+        </ul>
+        <h3>Neden Bunları Atmalıyız?</h3>
+        <p>Cam sınırsız sayıda geri dönüştürülebilir; cam atıkların ayrılması enerji tasarrufu sağlar ve ham madde kullanımını azaltır. Cam kırıkları dikkatlice paketlenmelidir.</p>
+    </div>
+
+    <div id="metalDetails" class="kutu-details metal" aria-hidden="true">
+        <h3>Gri Kutuda Neler Atılır?</h3>
+        <ul>
+            <li>Konserve kutuları</li>
+            <li>İçecek kutuları (alüminyum)</li>
+            <li>Metal kapaklar ve küçük metal parçalar</li>
+        </ul>
+        <h3>Neden Bunları Atmalıyız?</h3>
+        <p>Metaller geri dönüştürüldüğünde yeni ürün üretmek için daha az enerji harcanır. Metal atıklar sıkıştırılabilir ve geri dönüşüm verimliliğini artırır.</p>
+    </div>
+    <div id="organikDetails" class="kutu-details organik" aria-hidden="true">
+        <h3>Kahverengi Kutuda Neler Atılır?</h3>
+        <p>Organik atıklar; yemek artıkları, bahçe atıkları ve kompostlanabilir maddeler buraya atılır. Ayrıştırma toprağa geri dönüşüm sağlar.</p>
+    </div>
+    <div id="siyahDetails" class="kutu-details siyah" aria-hidden="true">
+        <h3>Siyah Kutuda Neler Atılır?</h3>
+        <p>Geri dönüşümü mümkün olmayan evsel atıklar (kirli paketlemeler, küçük kırık eşyalar) siyah kutuda toplanır ve bertaraf edilir.</p>
+    </div>
+    <div id="tibbiDetails" class="kutu-details tibbi" aria-hidden="true">
+        <h3>Tıbbi Atıklar (Kova / Poşet)</h3>
+        <p>Tıbbi atıklar özel işleme tabidir: poşetler kırmızı olarak ve büyük kaplar/kontenerler turuncu olarak işaretlenir; özel toplama süreçlerine teslim edilmelidir.</p>
+    </div>
+    <div id="seffafDetails" class="kutu-details seffaf" aria-hidden="true">
+        <h3>Şeffaf Kutuda Neler Atılır?</h3>
+        <p>Tehlikeli atıklar ve elektronik atıklar (piller, küçük elektronik cihazlar) şeffaf ambalaj veya ayrı toplama noktalarında toplanır. Güvenli teslim önemlidir.</p>
     </div>
 </div>
 
@@ -505,6 +655,128 @@ window.onclick = function(event) {
     // initial position
     update();
 })();
+</script>
+
+<script>
+// Kutu detaylarını toggle eden genel JS (tüm kutular için)
+document.addEventListener('DOMContentLoaded', function() {
+    const mappings = [
+        { type: 'kagit', detailId: 'kagitDetails' },
+        { type: 'plastik', detailId: 'plastikDetails' },
+        { type: 'cam', detailId: 'camDetails' },
+        { type: 'metal', detailId: 'metalDetails' },
+        { type: 'organik', detailId: 'organikDetails' },
+        { type: 'siyah', detailId: 'siyahDetails' },
+        { type: 'tibbi', detailId: 'tibbiDetails' },
+        { type: 'tibbi-bag', detailId: 'tibbiDetails' },
+        { type: 'seffaf', detailId: 'seffafDetails' }
+    ];
+
+    function closeAllExcept(openId) {
+        mappings.forEach(m => {
+            const d = document.getElementById(m.detailId);
+            const box = document.querySelector('.kutu.' + m.type);
+            if (!d) return;
+            if (m.detailId !== openId) {
+                d.classList.remove('open');
+                d.setAttribute('aria-hidden', 'true');
+                if (box) box.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
+
+    mappings.forEach(m => {
+        const box = document.querySelector('.kutu.' + m.type);
+        const detail = document.getElementById(m.detailId);
+        if (!box || !detail) return;
+
+        box.style.cursor = 'pointer';
+        box.setAttribute('role', 'button');
+        box.setAttribute('aria-expanded', 'false');
+
+        box.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const isOpen = detail.classList.toggle('open');
+            detail.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+            box.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+
+            if (isOpen) {
+                closeAllExcept(m.detailId);
+                // Otomatik kaydırma yok: panel açıldığında sayfa kaydırılmayacak.
+            }
+        });
+    });
+
+    // Dışarı tıklanırsa açık olanları kapat
+    document.addEventListener('click', function(e) {
+        mappings.forEach(m => {
+            const box = document.querySelector('.kutu.' + m.type);
+            const detail = document.getElementById(m.detailId);
+            if (!detail || !detail.classList.contains('open')) return;
+            if (box.contains(e.target) || detail.contains(e.target)) return;
+            detail.classList.remove('open');
+            detail.setAttribute('aria-hidden', 'true');
+            if (box) box.setAttribute('aria-expanded', 'false');
+        });
+    });
+
+    // Tema toggle: localStorage ile sakla
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+        function setThemeDark(isDark) {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                themeToggle.checked = true;
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeToggle.checked = false;
+            }
+        }
+
+        const saved = localStorage.getItem('theme');
+        if (saved === 'dark') {
+            setThemeDark(true);
+        } else if (saved === 'light') {
+            setThemeDark(false);
+        } else {
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            setThemeDark(prefersDark);
+        }
+
+        themeToggle.addEventListener('change', function() {
+            const isDark = themeToggle.checked;
+            setThemeDark(isDark);
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+    }
+});
+</script>
+
+<script>
+// Reveal-on-scroll using IntersectionObserver
+document.addEventListener('DOMContentLoaded', function() {
+    // Mark main .container elements as reveal targets
+    document.querySelectorAll('.container').forEach(el => el.classList.add('reveal'));
+
+    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) {
+        // make everything visible immediately
+        document.querySelectorAll('.reveal').forEach(r => r.classList.add('in-view'));
+        return;
+    }
+
+    const obs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+                // optionally unobserve to avoid re-running
+                obs.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(r => obs.observe(r));
+});
 </script>
 
 </body>
