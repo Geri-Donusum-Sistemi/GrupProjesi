@@ -16,6 +16,34 @@
             color: #333;
             background: #f5f5f5;
         }
+        .language-toggle {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            display: flex;
+            gap: 8px;
+            z-index: 500;
+        }
+        .lang-flag {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        .lang-flag:hover {
+            transform: scale(1.1);
+            border-color: white;
+        }
+        .lang-flag.active {
+            border-color: #fbc02d;
+            box-shadow: 0 0 8px rgba(251, 192, 45, 0.8);
+        }
         header {
             background: #2e7d32;
             color: white;
@@ -285,18 +313,23 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
+    <div class="language-toggle">
+        <div class="lang-flag active" data-lang="tr" onclick="switchLanguage('tr')" title="Türkçe">🇹🇷</div>
+        <div class="lang-flag" data-lang="en" onclick="switchLanguage('en')" title="English">🇬🇧</div>
+    </div>
+
     <!-- Login Modal -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeLoginModal()">&times;</span>
-            <h2>Giriş Yap</h2>
+            <h2 data-lang-tr="Giriş Yap">Giriş Yap</h2>
             <form>
-                <input type="email" placeholder="E-posta Adresi" required>
-                <input type="password" placeholder="Şifre" required>
-                <button type="submit">Giriş Yap</button>
+                <input type="email" placeholder="E-posta Adresi" data-lang-tr="E-posta Adresi" required>
+                <input type="password" placeholder="Şifre" data-lang-tr="Şifre" required>
+                <button type="submit" data-lang-tr="Giriş Yap">Giriş Yap</button>
             </form>
             <p style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
-                Hesabınız yok mu? <a href="#" onclick="switchToSignup()" style="color: #2e7d32; text-decoration: none;">Kayıt Ol</a>
+                <span data-lang-tr="Hesabınız yok mu?">Hesabınız yok mu?</span> <a href="#" onclick="switchToSignup()" style="color: #2e7d32; text-decoration: none;" data-lang-tr="Kayıt Ol">Kayıt Ol</a>
             </p>
         </div>
     </div>
@@ -305,16 +338,16 @@
     <div id="signupModal" class="modal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeSignupModal()">&times;</span>
-            <h2>Kayıt Ol</h2>
+            <h2 data-lang-tr="Kayıt Ol">Kayıt Ol</h2>
             <form>
-                <input type="text" placeholder="Ad Soyad" required>
-                <input type="email" placeholder="E-posta Adresi" required>
-                <input type="password" placeholder="Şifre" required>
-                <input type="password" placeholder="Şifre Tekrar" required>
-                <button type="submit">Kayıt Ol</button>
+                <input type="text" placeholder="Ad Soyad" data-lang-tr="Ad Soyad" required>
+                <input type="email" placeholder="E-posta Adresi" data-lang-tr="E-posta Adresi" required>
+                <input type="password" placeholder="Şifre" data-lang-tr="Şifre" required>
+                <input type="password" placeholder="Şifre Tekrar" data-lang-tr="Şifre Tekrar" required>
+                <button type="submit" data-lang-tr="Kayıt Ol">Kayıt Ol</button>
             </form>
             <p style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
-                Zaten hesabınız var mı? <a href="#" onclick="switchToLogin()" style="color: #2e7d32; text-decoration: none;">Giriş Yap</a>
+                <span data-lang-tr="Zaten hesabınız var mı?">Zaten hesabınız var mı?</span> <a href="#" onclick="switchToLogin()" style="color: #2e7d32; text-decoration: none;" data-lang-tr="Giriş Yap">Giriş Yap</a>
             </p>
         </div>
     </div>
@@ -411,28 +444,93 @@
     });
     </script>
 
+    <script>
+    // Language Switching (Turkish / English)
+    const translations = {
+        tr: {
+            'Geri Dönüşüm Nedir?': 'Geri Dönüşüm Nedir?',
+            'Kapsamlı Bilgilendirme ve Rehber': 'Kapsamlı Bilgilendirme ve Rehber',
+            'Ana Sayfa': 'Ana Sayfa',
+            'Neden Geri Dönüşüm?': 'Neden Geri Dönüşüm?',
+            'Atık Türleri': 'Atık Türleri',
+            'Kutuların Renkleri': 'Kutuların Renkleri',
+            'Tanım': 'Tanım',
+            'İletişim': 'İletişim',
+            'Giriş Yap': 'Giriş Yap',
+            'Kayıt Ol': 'Kayıt Ol',
+            'Çıkış': 'Çıkış'
+        },
+        en: {
+            'Geri Dönüşüm Nedir?': 'What is Recycling?',
+            'Kapsamlı Bilgilendirme ve Rehber': 'Comprehensive Information and Guide',
+            'Ana Sayfa': 'Home',
+            'Neden Geri Dönüşüm?': 'Why Recycling?',
+            'Atık Türleri': 'Waste Types',
+            'Kutuların Renkleri': 'Container Colors',
+            'Tanım': 'Definition',
+            'İletişim': 'Contact',
+            'Giriş Yap': 'Login',
+            'Kayıt Ol': 'Sign Up',
+            'Çıkış': 'Logout'
+        }
+    };
+
+    function switchLanguage(lang) {
+        localStorage.setItem('currentLanguage', lang);
+        
+        // Güncelleştir active flag
+        document.querySelectorAll('.lang-flag').forEach(flag => {
+            flag.classList.remove('active');
+            if (flag.getAttribute('data-lang') === lang) {
+                flag.classList.add('active');
+            }
+        });
+        
+        // Sayfada tüm türkçe metinleri çevir
+        document.querySelectorAll('[data-lang-tr]').forEach(element => {
+            const trText = element.getAttribute('data-lang-tr');
+            const translation = translations[lang][trText] || trText;
+            
+            if (element.tagName === 'INPUT') {
+                element.placeholder = translation;
+            } else {
+                element.textContent = translation;
+            }
+        });
+        
+        // HTML lang attribute'ü güncelle
+        document.documentElement.lang = lang;
+    }
+
+    // Sayfa yüklendiğinde saved language'ı kullan
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedLang = localStorage.getItem('currentLanguage') || 'tr';
+        switchLanguage(savedLang);
+    });
+    </script>
+
     <header>
         <div>
-            <h1>♻ Geri Dönüşüm Nedir?</h1>
-            <p>Kapsamlı Bilgilendirme ve Rehber</p>
+            <h1 data-lang-tr="Geri Dönüşüm Nedir?">♻ Geri Dönüşüm Nedir?</h1>
+            <p data-lang-tr="Kapsamlı Bilgilendirme ve Rehber">Kapsamlı Bilgilendirme ve Rehber</p>
         </div>
         <div class="auth-buttons" id="authButtons">
-            <button onclick="openLoginModal()">Giriş Yap</button>
-            <button class="signup" onclick="openSignupModal()">Kayıt Ol</button>
+            <button onclick="openLoginModal()" data-lang-tr="Giriş Yap">Giriş Yap</button>
+            <button class="signup" onclick="openSignupModal()" data-lang-tr="Kayıt Ol">Kayıt Ol</button>
         </div>
         <div class="user-info" id="userInfo">
             <span id="username"></span>
-            <button onclick="logout()">Çıkış</button>
+            <button onclick="logout()" data-lang-tr="Çıkış">Çıkış</button>
         </div>
     </header>
 
     <nav>
-        <a href="/">Ana Sayfa</a>
-        <a href="/#neden">Neden Geri Dönüşüm?</a>
-        <a href="/#turler">Atık Türleri</a>
-        <a href="/#renkler">Kutuların Renkleri</a>
-        <a href="/bilgi#tanim">Tanım</a>
-        <a href="/#iletisim">İletişim</a>
+        <a href="/" data-lang-tr="Ana Sayfa">Ana Sayfa</a>
+        <a href="/#neden" data-lang-tr="Neden Geri Dönüşüm?">Neden Geri Dönüşüm?</a>
+        <a href="/#turler" data-lang-tr="Atık Türleri">Atık Türleri</a>
+        <a href="/#renkler" data-lang-tr="Kutuların Renkleri">Kutuların Renkleri</a>
+        <a href="/bilgi#tanim" data-lang-tr="Tanım">Tanım</a>
+        <a href="/#iletisim" data-lang-tr="İletişim">İletişim</a>
     </nav>
 
     <div class="container">
