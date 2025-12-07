@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" id="htmlLang">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geri Dönüşüm Nedir? - Bilgilendirme Sistemi</title>
+    <title id="pageTitle">Geri Dönüşüm Nedir? - Bilgilendirme Sistemi</title>
     <style>
         * {
             margin: 0;
@@ -281,22 +281,57 @@
         .back-link:hover {
             background: #0277bd;
         }
+        .language-selector {
+            display: flex;
+            gap: 8px;
+            position: absolute;
+            left: 20px;
+            top: 15px;
+            z-index: 500;
+        }
+        .lang-btn {
+            background: white;
+            color: #2e7d32;
+            border: 2px solid white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+        .lang-btn:hover {
+            background: #a5d6a7;
+            color: white;
+        }
+        .lang-btn.active {
+            background: #fbc02d;
+            color: #000;
+            border-color: #fbc02d;
+        }
     </style>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
+
+<div class="language-selector">
+    <button class="lang-btn active" data-lang="tr" onclick="setLanguage('tr')">TR</button>
+    <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
+    <button class="lang-btn" data-lang="de" onclick="setLanguage('de')">DE</button>
+</div>
+
     <!-- Login Modal -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeLoginModal()">&times;</span>
-            <h2>Giriş Yap</h2>
+            <h2 data-tr="Giriş Yap" data-en="Login" data-de="Anmelden">Giriş Yap</h2>
             <form>
-                <input type="email" placeholder="E-posta Adresi" required>
-                <input type="password" placeholder="Şifre" required>
-                <button type="submit">Giriş Yap</button>
+                <input type="email" placeholder="E-posta Adresi" data-tr="E-posta Adresi" data-en="Email Address" data-de="E-Mail-Adresse" required>
+                <input type="password" placeholder="Şifre" data-tr="Şifre" data-en="Password" data-de="Passwort" required>
+                <button type="submit" data-tr="Giriş Yap" data-en="Login" data-de="Anmelden">Giriş Yap</button>
             </form>
             <p style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
-                Hesabınız yok mu? <a href="#" onclick="switchToSignup()" style="color: #2e7d32; text-decoration: none;">Kayıt Ol</a>
+                <span data-tr="Hesabınız yok mu?" data-en="Don't have an account?" data-de="Haben Sie kein Konto?">Hesabınız yok mu?</span> <a href="#" onclick="switchToSignup()" style="color: #2e7d32; text-decoration: none;" data-tr="Kayıt Ol" data-en="Sign Up" data-de="Registrieren">Kayıt Ol</a>
             </p>
         </div>
     </div>
@@ -305,16 +340,16 @@
     <div id="signupModal" class="modal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeSignupModal()">&times;</span>
-            <h2>Kayıt Ol</h2>
+            <h2 data-tr="Kayıt Ol" data-en="Sign Up" data-de="Registrieren">Kayıt Ol</h2>
             <form>
-                <input type="text" placeholder="Ad Soyad" required>
-                <input type="email" placeholder="E-posta Adresi" required>
-                <input type="password" placeholder="Şifre" required>
-                <input type="password" placeholder="Şifre Tekrar" required>
-                <button type="submit">Kayıt Ol</button>
+                <input type="text" placeholder="Ad Soyad" data-tr="Ad Soyad" data-en="Full Name" data-de="Vollständiger Name" required>
+                <input type="email" placeholder="E-posta Adresi" data-tr="E-posta Adresi" data-en="Email Address" data-de="E-Mail-Adresse" required>
+                <input type="password" placeholder="Şifre" data-tr="Şifre" data-en="Password" data-de="Passwort" required>
+                <input type="password" placeholder="Şifre Tekrar" data-tr="Şifre Tekrar" data-en="Confirm Password" data-de="Passwort bestätigen" required>
+                <button type="submit" data-tr="Kayıt Ol" data-en="Sign Up" data-de="Registrieren">Kayıt Ol</button>
             </form>
             <p style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
-                Zaten hesabınız var mı? <a href="#" onclick="switchToLogin()" style="color: #2e7d32; text-decoration: none;">Giriş Yap</a>
+                <span data-tr="Zaten hesabınız var mı?" data-en="Already have an account?" data-de="Haben Sie bereits ein Konto?">Zaten hesabınız var mı?</span> <a href="#" onclick="switchToLogin()" style="color: #2e7d32; text-decoration: none;" data-tr="Giriş Yap" data-en="Login" data-de="Anmelden">Giriş Yap</a>
             </p>
         </div>
     </div>
@@ -409,30 +444,128 @@
         
         updateAuthUI();
     });
+
+    // Language Switching System
+    const translations = {
+        tr: {
+            'Geri Dönüşüm Nedir?': 'Geri Dönüşüm Nedir?',
+            'Kapsamlı Bilgilendirme ve Rehber': 'Kapsamlı Bilgilendirme ve Rehber',
+            'Giriş Yap': 'Giriş Yap',
+            'Kayıt Ol': 'Kayıt Ol',
+            'Çıkış': 'Çıkış',
+            'E-posta Adresi': 'E-posta Adresi',
+            'Şifre': 'Şifre',
+            'Ad Soyad': 'Ad Soyad',
+            'Şifre Tekrar': 'Şifre Tekrar',
+            'Hesabınız yok mu?': 'Hesabınız yok mu?',
+            'Zaten hesabınız var mı?': 'Zaten hesabınız var mı?',
+            'Ana Sayfa': 'Ana Sayfa',
+            'Neden Geri Dönüşüm?': 'Neden Geri Dönüşüm?',
+            'Atık Türleri': 'Atık Türleri',
+            'Kutuların Renkleri': 'Kutuların Renkleri',
+            'Tanım': 'Tanım',
+            'İletişim': 'İletişim',
+            'What is Recycling?': 'Geri Dönüşüm Nedir?',
+            'Comprehensive Information and Guide': 'Kapsamlı Bilgilendirme ve Rehber'
+        },
+        en: {
+            'Geri Dönüşüm Nedir?': 'What is Recycling?',
+            'Kapsamlı Bilgilendirme ve Rehber': 'Comprehensive Information and Guide',
+            'Giriş Yap': 'Login',
+            'Kayıt Ol': 'Sign Up',
+            'Çıkış': 'Logout',
+            'E-posta Adresi': 'Email Address',
+            'Şifre': 'Password',
+            'Ad Soyad': 'Full Name',
+            'Şifre Tekrar': 'Confirm Password',
+            'Hesabınız yok mu?': 'Don\'t have an account?',
+            'Zaten hesabınız var mı?': 'Already have an account?',
+            'Ana Sayfa': 'Home',
+            'Neden Geri Dönüşüm?': 'Why Recycling?',
+            'Atık Türleri': 'Waste Types',
+            'Kutuların Renkleri': 'Container Colors',
+            'Tanım': 'Definition',
+            'İletişim': 'Contact'
+        },
+        de: {
+            'Geri Dönüşüm Nedir?': 'Was ist Recycling?',
+            'Kapsamlı Bilgilendirme ve Rehber': 'Umfassende Informationen und Anleitung',
+            'Giriş Yap': 'Anmelden',
+            'Kayıt Ol': 'Registrieren',
+            'Çıkış': 'Abmelden',
+            'E-posta Adresi': 'E-Mail-Adresse',
+            'Şifre': 'Passwort',
+            'Ad Soyad': 'Vollständiger Name',
+            'Şifre Tekrar': 'Passwort bestätigen',
+            'Hesabınız yok mu?': 'Haben Sie kein Konto?',
+            'Zaten hesabınız var mı?': 'Haben Sie bereits ein Konto?',
+            'Ana Sayfa': 'Startseite',
+            'Neden Geri Dönüşüm?': 'Warum Recycling?',
+            'Atık Türleri': 'Abfallarten',
+            'Kutuların Renkleri': 'Behälterfarben',
+            'Tanım': 'Definition',
+            'İletişim': 'Kontakt'
+        }
+    };
+
+    function setLanguage(lang) {
+        // Save preference
+        localStorage.setItem('language', lang);
+        
+        // Update active button
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.getAttribute('data-lang') === lang) {
+                btn.classList.add('active');
+            }
+        });
+        
+        // Update page content
+        document.querySelectorAll('[data-tr]').forEach(element => {
+            const trText = element.getAttribute('data-tr');
+            const translation = translations[lang][trText];
+            if (translation) {
+                if (element.tagName === 'INPUT') {
+                    element.placeholder = translation;
+                } else {
+                    element.textContent = translation;
+                }
+            }
+        });
+        
+        // Update html lang attribute
+        document.documentElement.lang = lang;
+    }
+
+    // Load saved language preference on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedLang = localStorage.getItem('language') || 'tr';
+        setLanguage(savedLang);
+    });
     </script>
 
     <header>
         <div>
-            <h1>♻ Geri Dönüşüm Nedir?</h1>
-            <p>Kapsamlı Bilgilendirme ve Rehber</p>
+            <h1 data-tr="Geri Dönüşüm Nedir?" data-en="What is Recycling?" data-de="Was ist Recycling?">♻ Geri Dönüşüm Nedir?</h1>
+            <p data-tr="Kapsamlı Bilgilendirme ve Rehber" data-en="Comprehensive Information and Guide" data-de="Umfassende Informationen und Anleitung">Kapsamlı Bilgilendirme ve Rehber</p>
         </div>
         <div class="auth-buttons" id="authButtons">
-            <button onclick="openLoginModal()">Giriş Yap</button>
-            <button class="signup" onclick="openSignupModal()">Kayıt Ol</button>
+            <button onclick="openLoginModal()" data-tr="Giriş Yap" data-en="Login" data-de="Anmelden">Giriş Yap</button>
+            <button class="signup" onclick="openSignupModal()" data-tr="Kayıt Ol" data-en="Sign Up" data-de="Registrieren">Kayıt Ol</button>
         </div>
         <div class="user-info" id="userInfo">
             <span id="username"></span>
-            <button onclick="logout()">Çıkış</button>
+            <button onclick="logout()" data-tr="Çıkış" data-en="Logout" data-de="Abmelden">Çıkış</button>
         </div>
     </header>
 
     <nav>
-        <a href="/">Ana Sayfa</a>
-        <a href="/#neden">Neden Geri Dönüşüm?</a>
-        <a href="/#turler">Atık Türleri</a>
-        <a href="/#renkler">Kutuların Renkleri</a>
-        <a href="/bilgi#tanim">Tanım</a>
-        <a href="/#iletisim">İletişim</a>
+        <a href="/" data-tr="Ana Sayfa" data-en="Home" data-de="Startseite">Ana Sayfa</a>
+        <a href="/#neden" data-tr="Neden Geri Dönüşüm?" data-en="Why Recycling?" data-de="Warum Recycling?">Neden Geri Dönüşüm?</a>
+        <a href="/#turler" data-tr="Atık Türleri" data-en="Waste Types" data-de="Abfallarten">Atık Türleri</a>
+        <a href="/#renkler" data-tr="Kutuların Renkleri" data-en="Container Colors" data-de="Behälterfarben">Kutuların Renkleri</a>
+        <a href="/bilgi#tanim" data-tr="Tanım" data-en="Definition" data-de="Definition">Tanım</a>
+        <a href="/#iletisim" data-tr="İletişim" data-en="Contact" data-de="Kontakt">İletişim</a>
     </nav>
 
     <div class="container">

@@ -1,13 +1,41 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" id="htmlLang">
 <head>
     <meta charset="UTF-8">
-    <title>Geri Dönüşüm Bilgilendirme Sistemi</title>
+    <title id="pageTitle">Geri Dönüşüm Bilgilendirme Sistemi</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             background: transparent;
+        }
+        .language-selector {
+            position: absolute;
+            left: 20px;
+            top: 15px;
+            display: flex;
+            gap: 8px;
+            z-index: 500;
+        }
+        .lang-btn {
+            background: white;
+            color: #2e7d32;
+            border: 2px solid white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+        .lang-btn:hover {
+            background: #a5d6a7;
+            color: white;
+        }
+        .lang-btn.active {
+            background: #fbc02d;
+            color: #000;
+            border-color: #fbc02d;
         }
         header {
             background: #2e7d32;
@@ -16,6 +44,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
         }
         header > div:first-child {
             text-align: center;
@@ -202,15 +231,21 @@
 </head>
 <body class="bg-world">
 
+<div class="language-selector">
+    <button class="lang-btn active" data-lang="tr" onclick="setLanguage('tr')">TR</button>
+    <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
+    <button class="lang-btn" data-lang="de" onclick="setLanguage('de')">DE</button>
+</div>
+
 <header>
     <div>
-        <h1>♻ Geri Dönüşüm Bilgilendirme Sistemi</h1>
-        <p>Çevreyi korumak için küçük adımlar, büyük etkiler.</p>
+        <h1 data-tr="Geri Dönüşüm Bilgilendirme Sistemi" data-en="Recycling Information System" data-de="Recycling-Informationssystem">Geri Dönüşüm Bilgilendirme Sistemi</h1>
+        <p data-tr="Çevreyi korumak için küçük adımlar, büyük etkiler." data-en="Small steps to protect the environment, big impacts." data-de="Kleine Schritte zum Schutz der Umwelt, große Auswirkungen.">Çevreyi korumak için küçük adımlar, büyük etkiler.</p>
     </div>
     <div class="auth-area">
         <div class="auth-buttons" id="authButtons">
-            <button onclick="openLoginModal()">Giriş Yap</button>
-            <button class="signup" onclick="openSignupModal()">Kayıt Ol</button>
+            <button onclick="openLoginModal()" data-tr="Giriş Yap" data-en="Login" data-de="Anmelden">Giriş Yap</button>
+            <button class="signup" onclick="openSignupModal()" data-tr="Kayıt Ol" data-en="Sign Up" data-de="Registrieren">Kayıt Ol</button>
         </div>
         <label class="theme-switch" title="Koyu temayı aç/kapa">
             <input type="checkbox" id="themeToggle" aria-label="Koyu tema">
@@ -219,7 +254,7 @@
     </div>
     <div class="user-info" id="userInfo">
         <span id="username"></span>
-        <button onclick="logout()">Çıkış</button>
+        <button onclick="logout()" data-tr="Çıkış" data-en="Logout" data-de="Abmelden">Çıkış</button>
     </div>
 </header>
 
@@ -227,14 +262,14 @@
 <div id="loginModal" class="modal">
     <div class="modal-content">
         <span class="modal-close" onclick="closeLoginModal()">&times;</span>
-        <h2>Giriş Yap</h2>
+        <h2 data-tr="Giriş Yap" data-en="Login" data-de="Anmelden">Giriş Yap</h2>
         <form>
-            <input type="email" placeholder="E-posta Adresi" required>
-            <input type="password" placeholder="Şifre" required>
-            <button type="submit">Giriş Yap</button>
+            <input type="email" placeholder="E-posta Adresi" data-tr="E-posta Adresi" data-en="Email Address" data-de="E-Mail-Adresse" required>
+            <input type="password" placeholder="Şifre" data-tr="Şifre" data-en="Password" data-de="Passwort" required>
+            <button type="submit" data-tr="Giriş Yap" data-en="Login" data-de="Anmelden">Giriş Yap</button>
         </form>
         <p style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
-            Hesabınız yok mu? <a href="#" onclick="switchToSignup()" style="color: #2e7d32; text-decoration: none;">Kayıt Ol</a>
+            <span data-tr="Hesabınız yok mu?" data-en="Don't have an account?" data-de="Haben Sie kein Konto?">Hesabınız yok mu?</span> <a href="#" onclick="switchToSignup()" style="color: #2e7d32; text-decoration: none;" data-tr="Kayıt Ol" data-en="Sign Up" data-de="Registrieren">Kayıt Ol</a>
         </p>
     </div>
 </div>
@@ -243,16 +278,16 @@
 <div id="signupModal" class="modal">
     <div class="modal-content">
         <span class="modal-close" onclick="closeSignupModal()">&times;</span>
-        <h2>Kayıt Ol</h2>
+        <h2 data-tr="Kayıt Ol" data-en="Sign Up" data-de="Registrieren">Kayıt Ol</h2>
         <form>
-            <input type="text" placeholder="Ad Soyad" required>
-            <input type="email" placeholder="E-posta Adresi" required>
-            <input type="password" placeholder="Şifre" required>
-            <input type="password" placeholder="Şifre Tekrar" required>
-            <button type="submit">Kayıt Ol</button>
+            <input type="text" placeholder="Ad Soyad" data-tr="Ad Soyad" data-en="Full Name" data-de="Vollständiger Name" required>
+            <input type="email" placeholder="E-posta Adresi" data-tr="E-posta Adresi" data-en="Email Address" data-de="E-Mail-Adresse" required>
+            <input type="password" placeholder="Şifre" data-tr="Şifre" data-en="Password" data-de="Passwort" required>
+            <input type="password" placeholder="Şifre Tekrar" data-tr="Şifre Tekrar" data-en="Confirm Password" data-de="Passwort bestätigen" required>
+            <button type="submit" data-tr="Kayıt Ol" data-en="Sign Up" data-de="Registrieren">Kayıt Ol</button>
         </form>
         <p style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
-            Zaten hesabınız var mı? <a href="#" onclick="switchToLogin()" style="color: #2e7d32; text-decoration: none;">Giriş Yap</a>
+            <span data-tr="Zaten hesabınız var mı?" data-en="Already have an account?" data-de="Haben Sie bereits ein Konto?">Zaten hesabınız var mı?</span> <a href="#" onclick="switchToLogin()" style="color: #2e7d32; text-decoration: none;" data-tr="Giriş Yap" data-en="Login" data-de="Anmelden">Giriş Yap</a>
         </p>
     </div>
 </div>
@@ -366,18 +401,18 @@ window.onclick = function(event) {
 
 <div class="nav-with-panel">
     <nav>
-        <a href="#neden" id="link-neden">Neden Geri Dönüşüm?</a>
-        <a href="#turler" id="link-turler">Atık Türleri</a>
-        <a href="#renkler">Kutuların Renkleri</a>
-        <a href="/bilgi">Geri Dönüşüm Nedir?</a>
-        <a href="#faaliyetler">Faaliyetler</a>
-        <a href="#iletisim">İletişim</a>
-        <a href="#ekip">Proje Ekibi</a>
+        <a href="#neden" id="link-neden" data-tr="Neden Geri Dönüşüm?" data-en="Why Recycling?" data-de="Warum Recycling?">Neden Geri Dönüşüm?</a>
+        <a href="#turler" id="link-turler" data-tr="Atık Türleri" data-en="Waste Types" data-de="Abfallarten">Atık Türleri</a>
+        <a href="#renkler" data-tr="Kutuların Renkleri" data-en="Container Colors" data-de="Behälterfarben">Kutuların Renkleri</a>
+        <a href="/bilgi" data-tr="Geri Dönüşüm Nedir?" data-en="What is Recycling?" data-de="Was ist Recycling?">Geri Dönüşüm Nedir?</a>
+        <a href="#faaliyetler" data-tr="Faaliyetler" data-en="Activities" data-de="Aktivitäten">Faaliyetler</a>
+        <a href="#iletisim" data-tr="İletişim" data-en="Contact" data-de="Kontakt">İletişim</a>
+        <a href="#ekip" data-tr="Proje Ekibi" data-en="Project Team" data-de="Projektteam">Proje Ekibi</a>
     </nav>
 
     <!-- Hover panel: hidden by default, shown when hovering the "Neden" link -->
     <div id="hover-neden" class="hover-panel" aria-hidden="true">
-        <h2>Neden Geri Dönüşüm Önemlidir?</h2>
+        <h2 data-tr="Neden Geri Dönüşüm Önemlidir?" data-en="Why is Recycling Important?" data-de="Warum ist Recycling wichtig?">Neden Geri Dönüşüm Önemlidir?</h2>
         <ul>
             <li>Doğal kaynakların daha verimli kullanılmasını sağlar.</li>
             <li>Enerji tasarrufu sağlar.</li>
@@ -395,10 +430,10 @@ window.onclick = function(event) {
     <div class="layer layer-mid" aria-hidden="true"></div>
     <div class="layer layer-front" aria-hidden="true"></div>
     <div class="hero-content hero-float">
-        <h1>Geri Dönüşümle Geleceğe Adım At</h1>
-        <p>Doğa için küçük bir adım atın — bugün geri dönüştürmeye başlayın.</p>
+        <h1 data-tr="Geri Dönüşümle Geleceğe Adım At" data-en="Step into the Future with Recycling" data-de="Recycling - Ein Schritt in die Zukunft">Geri Dönüşümle Geleceğe Adım At</h1>
+        <p data-tr="Doğa için küçük bir adım atın — bugün geri dönüştürmeye başlayın." data-en="Take a small step for nature — start recycling today." data-de="Ein kleiner Schritt für die Natur — fangen Sie heute an zu recyceln.">Doğa için küçük bir adım atın — bugün geri dönüştürmeye başlayın.</p>
         <div style="display: flex; gap: 10px; justify-content: center;">
-            <a class="cta" href="#neden">Nasıl Başlanır?</a>
+            <a class="cta" href="#neden" data-tr="Nasıl Başlanır?" data-en="How to Start?" data-de="Wie fangen Sie an?">Nasıl Başlanır?</a>
             <a class="cta" href="/bilgi" style="background: #1565c0;">Detaylı Bilgi</a>
         </div>
     </div>
@@ -482,7 +517,7 @@ window.onclick = function(event) {
 <!-- 'turler' content moved into hover panel; removed from page flow -->
 
 <div class="container" id="renkler">
-    <h2>Geri Dönüşüm Kutularının Renkleri</h2>
+    <h2 data-tr="Geri Dönüşüm Kutularının Renkleri" data-en="Colors of Recycling Bins" data-de="Farben der Recycling-Behälter">Geri Dönüşüm Kutularının Renkleri</h2>
     <div class="kutular">
         <div class="kutu kagit">MAVİ<br>Kağıt / Karton</div>
         <div class="kutu plastik">SARI<br>Plastik</div>
@@ -560,7 +595,7 @@ window.onclick = function(event) {
 </div>
 
 <div class="container" id="faaliyetler">
-    <h2>Faaliyetler</h2>
+    <h2 data-tr="Faaliyetler" data-en="Activities" data-de="Aktivitäten">Faaliyetler</h2>
     <ul>
         <li><strong>Çevre Temizliği Etkinlikleri:</strong> Ayda bir kez organize edilen parklar ve plajlar temizlik kampanyaları.</li>
         <li><strong>Eğitim Atölyesi:</strong> Okullara ve kurumlara geri dönüşüm hakkında bilgilendirme ve pratik atölyeler düzenliyoruz.</li>
@@ -570,7 +605,7 @@ window.onclick = function(event) {
 </div>
 
 <div class="container" id="iletisim">
-    <h2>İletişim</h2>
+    <h2 data-tr="İletişim" data-en="Contact" data-de="Kontakt">İletişim</h2>
     <p><strong>E-posta:</strong> <a href="mailto:info@geridosumsistemi.org">info@geridosumsistemi.org</a></p>
     <p><strong>Telefon:</strong> <a href="tel:05373148806">0537 314 8806</a></p>
     <p><strong>Adres:</strong> Ankara, Sincan, Türkiye</p>
@@ -583,7 +618,7 @@ window.onclick = function(event) {
 </div>
 
 <div class="container" id="ekip">
-    <h2>Proje Ekibi</h2>
+    <h2 data-tr="Proje Ekibi" data-en="Project Team" data-de="Projektteam">Proje Ekibi</h2>
     <p>Bu site, Geri Dönüşüm Bilgilendirme Sistemi grup projesi kapsamında hazırlanmıştır.</p>
     <ul>
         <li>Nuri Özcan  – 240307041</li>
@@ -776,6 +811,120 @@ document.addEventListener('DOMContentLoaded', function() {
     }, { threshold: 0.12 });
 
     document.querySelectorAll('.reveal').forEach(r => obs.observe(r));
+});
+
+// Language Switching System
+const translations = {
+    tr: {
+        'Geri Dönüşüm Bilgilendirme Sistemi': 'Geri Dönüşüm Bilgilendirme Sistemi',
+        'Çevreyi korumak için küçük adımlar, büyük etkiler.': 'Çevreyi korumak için küçük adımlar, büyük etkiler.',
+        'Neden Geri Dönüşüm?': 'Neden Geri Dönüşüm?',
+        'Atık Türleri': 'Atık Türleri',
+        'Kutuların Renkleri': 'Kutuların Renkleri',
+        'Geri Dönüşüm Nedir?': 'Geri Dönüşüm Nedir?',
+        'Faaliyetler': 'Faaliyetler',
+        'İletişim': 'İletişim',
+        'Proje Ekibi': 'Proje Ekibi',
+        'Giriş Yap': 'Giriş Yap',
+        'Kayıt Ol': 'Kayıt Ol',
+        'Çıkış': 'Çıkış',
+        'E-posta Adresi': 'E-posta Adresi',
+        'Şifre': 'Şifre',
+        'Ad Soyad': 'Ad Soyad',
+        'Şifre Tekrar': 'Şifre Tekrar',
+        'Hesabınız yok mu?': 'Hesabınız yok mu?',
+        'Zaten hesabınız var mı?': 'Zaten hesabınız var mı?',
+        'Geri Dönüşümle Geleceğe Adım At': 'Geri Dönüşümle Geleceğe Adım At',
+        'Doğa için küçük bir adım atın — bugün geri dönüştürmeye başlayın.': 'Doğa için küçük bir adım atın — bugün geri dönüştürmeye başlayın.',
+        'Nasıl Başlanır?': 'Nasıl Başlanır?',
+        'Neden Geri Dönüşüm Önemlidir?': 'Neden Geri Dönüşüm Önemlidir?',
+        'Geri Dönüşüm Kutularının Renkleri': 'Geri Dönüşüm Kutularının Renkleri'
+    },
+    en: {
+        'Geri Dönüşüm Bilgilendirme Sistemi': 'Recycling Information System',
+        'Çevreyi korumak için küçük adımlar, büyük etkiler.': 'Small steps to protect the environment, big impacts.',
+        'Neden Geri Dönüşüm?': 'Why Recycling?',
+        'Atık Türleri': 'Waste Types',
+        'Kutuların Renkleri': 'Container Colors',
+        'Geri Dönüşüm Nedir?': 'What is Recycling?',
+        'Faaliyetler': 'Activities',
+        'İletişim': 'Contact',
+        'Proje Ekibi': 'Project Team',
+        'Giriş Yap': 'Login',
+        'Kayıt Ol': 'Sign Up',
+        'Çıkış': 'Logout',
+        'E-posta Adresi': 'Email Address',
+        'Şifre': 'Password',
+        'Ad Soyad': 'Full Name',
+        'Şifre Tekrar': 'Confirm Password',
+        'Hesabınız yok mu?': 'Don\'t have an account?',
+        'Zaten hesabınız var mı?': 'Already have an account?',
+        'Geri Dönüşümle Geleceğe Adım At': 'Step into the Future with Recycling',
+        'Doğa için küçük bir adım atın — bugün geri dönüştürmeye başlayın.': 'Take a small step for nature — start recycling today.',
+        'Nasıl Başlanır?': 'How to Start?',
+        'Neden Geri Dönüşüm Önemlidir?': 'Why is Recycling Important?',
+        'Geri Dönüşüm Kutularının Renkleri': 'Colors of Recycling Bins'
+    },
+    de: {
+        'Geri Dönüşüm Bilgilendirme Sistemi': 'Recycling-Informationssystem',
+        'Çevreyi korumak için küçük adımlar, büyük etkiler.': 'Kleine Schritte zum Schutz der Umwelt, große Auswirkungen.',
+        'Neden Geri Dönüşüm?': 'Warum Recycling?',
+        'Atık Türleri': 'Abfallarten',
+        'Kutuların Renkleri': 'Behälterfarben',
+        'Geri Dönüşüm Nedir?': 'Was ist Recycling?',
+        'Faaliyetler': 'Aktivitäten',
+        'İletişim': 'Kontakt',
+        'Proje Ekibi': 'Projektteam',
+        'Giriş Yap': 'Anmelden',
+        'Kayıt Ol': 'Registrieren',
+        'Çıkış': 'Abmelden',
+        'E-posta Adresi': 'E-Mail-Adresse',
+        'Şifre': 'Passwort',
+        'Ad Soyad': 'Vollständiger Name',
+        'Şifre Tekrar': 'Passwort bestätigen',
+        'Hesabınız yok mu?': 'Haben Sie kein Konto?',
+        'Zaten hesabınız var mı?': 'Haben Sie bereits ein Konto?',
+        'Geri Dönüşümle Geleceğe Adım At': 'Recycling - Ein Schritt in die Zukunft',
+        'Doğa için küçük bir adım atın — bugün geri dönüştürmeye başlayın.': 'Ein kleiner Schritt für die Natur — fangen Sie heute an zu recyceln.',
+        'Nasıl Başlanır?': 'Wie fangen Sie an?',
+        'Neden Geri Dönüşüm Önemlidir?': 'Warum ist Recycling wichtig?',
+        'Geri Dönüşüm Kutularının Renkleri': 'Farben der Recycling-Behälter'
+    }
+};
+
+function setLanguage(lang) {
+    // Save preference
+    localStorage.setItem('language', lang);
+    
+    // Update active button
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-lang') === lang) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Update page content
+    document.querySelectorAll('[data-tr]').forEach(element => {
+        const trText = element.getAttribute('data-tr');
+        const translation = translations[lang][trText];
+        if (translation) {
+            if (element.tagName === 'INPUT') {
+                element.placeholder = translation;
+            } else {
+                element.textContent = translation;
+            }
+        }
+    });
+    
+    // Update html lang attribute
+    document.documentElement.lang = lang;
+}
+
+// Load saved language preference on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const savedLang = localStorage.getItem('language') || 'tr';
+    setLanguage(savedLang);
 });
 </script>
 
