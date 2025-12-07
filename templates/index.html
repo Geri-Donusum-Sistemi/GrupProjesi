@@ -521,9 +521,8 @@ window.onclick = function(event) {
         <div class="kutu metal">GRİ<br>Metal</div>
         <div class="kutu organik">KAHVERENGİ<br>Organik</div>
         <div class="kutu siyah">SİYAH<br>Geri Dönüşemeyen</div>
-        <div class="kutu tibbi">TURUNCU<br>Tıbbi (kova)</div>
-        <div class="kutu tibbi-bag">KIRMIZI<br>Tıbbi (poşet)</div>
-        <div class="kutu seffaf">ŞEFFAF<br>Tehlikeli / Elektronik</div>
+        <div class="kutu tibbi">KIRMIZI<br>Tibbi</div>
+        <div class="kutu seffaf">SEFFAF<br>Tehlikeli / Elektronik</div>
     </div>
     <!-- Detay panelleri: kutulara tıklayınca açılacak bilgiler -->
     <div id="kagitDetails" class="kutu-details kagit" aria-hidden="true">
@@ -581,8 +580,8 @@ window.onclick = function(event) {
         <p>Geri dönüşümü mümkün olmayan evsel atıklar (kirli paketlemeler, küçük kırık eşyalar) siyah kutuda toplanır ve bertaraf edilir.</p>
     </div>
     <div id="tibbiDetails" class="kutu-details tibbi" aria-hidden="true">
-        <h3>Tıbbi Atıklar (Kova / Poşet)</h3>
-        <p>Tıbbi atıklar özel işleme tabidir: poşetler kırmızı olarak ve büyük kaplar/kontenerler turuncu olarak işaretlenir; özel toplama süreçlerine teslim edilmelidir.</p>
+        <h3>Tibbi Atiklar (Kirmizi)</h3>
+        <p>Tibbi atiklar kirmizi kutu veya posetlerde toplanmalidir; sivri nesneler delinmeye dayanikli kutularda ayrica isaretlenmelidir.</p>
     </div>
     <div id="seffafDetails" class="kutu-details seffaf" aria-hidden="true">
         <h3>Şeffaf Kutuda Neler Atılır?</h3>
@@ -699,7 +698,6 @@ document.addEventListener('DOMContentLoaded', function() {
         { type: 'organik', detailId: 'organikDetails' },
         { type: 'siyah', detailId: 'siyahDetails' },
         { type: 'tibbi', detailId: 'tibbiDetails' },
-        { type: 'tibbi-bag', detailId: 'tibbiDetails' },
         { type: 'seffaf', detailId: 'seffafDetails' }
     ];
 
@@ -900,7 +898,6 @@ document.addEventListener('DOMContentLoaded', function() {
     switchLanguage(savedLang);
 });
 </script>
-
 
 
 

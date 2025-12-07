@@ -414,8 +414,8 @@ button:focus, a:focus { outline: 3px solid rgba(46,125,50,0.12); outline-offset:
 .mini-kutu.organil { background: #8d6e63; color: #fff; } /* small typo-safe class (use .organik below) */
 .mini-kutu.organik { background: #8d6e63; color: #fff; }
 .mini-kutu.siyah { background: #212121; color: #fff; }
-.mini-kutu.tibbi { background: #ff9800; color: #000; }
-.mini-kutu.tibbi-bag { background: #d32f2f; color: #fff; border-radius: 50%; width: 18px; height: 18px; }
+.mini-kutu.tibbi { background: #d32f2f; color: #fff; }
+.mini-kutu.tibbi-bag { background: #d32f2f; color: #fff; border-radius: 4px; }
 .mini-kutu.tehlike { background: rgba(255,255,255,0.06); color: #333; border: 2px dashed #9e9e9e; }
 
 /* Main kutu color classes (in case inline styles don't include them) */
@@ -425,12 +425,12 @@ button:focus, a:focus { outline: 3px solid rgba(46,125,50,0.12); outline-offset:
 .metal { background: #616161; }
 .organik { background: #8d6e63; }
 .siyah { background: #212121; }
-.tibbi { background: #ff9800; color: #000; }
+.tibbi { background: #d32f2f; color: #fff; }
 .tibbi-bag { background: #d32f2f; color: #fff; }
 .seffaf { background: linear-gradient(90deg, rgba(255,255,255,0.0), rgba(255,255,255,0.02)); border: 2px dashed rgba(0,0,0,0.08); color: #333; }
 
 /* Details styling for tibbi/seffaf */
-.kutu-details.tibbi { background: #fff3e0; color: #3e2f00; border-left: 6px solid #ff9800; }
+.kutu-details.tibbi { background: #fdecea; color: #5f1a1a; border-left: 6px solid #d32f2f; }
 .kutu-details.seffaf { background: #fbfbfd; color: #2c2c2c; border-left: 6px dashed #9e9e9e; }
 
 
