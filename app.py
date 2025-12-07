@@ -31,6 +31,11 @@ def index():
     atiklar = Atik.query.all()
     return render_template("index.html", atiklar=atiklar)
 
+# --- BİLGİ SAYFASI (Geri Dönüşüm Nedir?) ---
+@app.route("/bilgi")
+def bilgi():
+    return render_template("bilgi.html")
+
 # --- ADMIN SAYFASI ---
 @app.route("/admin")
 def admin():

@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geri Dönüşüm Nedir? - Bilgilendirme Sistemi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        header {
+            background: #2e7d32;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header > div:first-child {
+            text-align: center;
+            flex: 1;
+        }
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        header p {
+            font-size: 1rem;
+            opacity: 0.95;
+            margin: 0;
+        }
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .auth-buttons button {
+            background: white;
+            color: #2e7d32;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .auth-buttons button:hover {
+            background: #a5d6a7;
+        }
+        .auth-buttons button.signup {
+            background: #fbc02d;
+            color: #000;
+        }
+        .auth-buttons button.signup:hover {
+            background: #f9a825;
+        }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .modal-content h2 {
+            margin-top: 0;
+            color: #2e7d32;
+        }
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-content input {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .modal-content input:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 5px #2e7d32;
+        }
+        .modal-content button {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .modal-content button:hover {
+            background: #0277bd;
+        }
+        .modal-close {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+        .modal-close:hover {
+            color: #000;
+        }
+        .user-info {
+            display: none;
+            color: white;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-info.show {
+            display: flex;
+        }
+        .user-info span {
+            font-weight: bold;
+        }
+        .user-info button {
+            background: white;
+            color: #0288d1;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .user-info button:hover {
+            background: #b3e5fc;
+        }
+        nav {
+            background: #0288d1;
+            padding: 10px 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: #a5d6a7;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2e7d32;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            border-bottom: 3px solid #a5d6a7;
+            padding-bottom: 10px;
+        }
+        h3 {
+            color: #388e3c;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        li {
+            margin-bottom: 8px;
+            text-align: justify;
+        }
+        strong {
+            color: #1b5e20;
+        }
+        .highlight-box {
+            background: #e8f5e9;
+            border-left: 4px solid #2e7d32;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-box {
+            background: linear-gradient(135deg, #2e7d32, #388e3c);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-box h4 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        .stat-box p {
+            font-size: 0.95rem;
+            margin: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #2e7d32;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        footer {
+            background: #f9f9f9;
+            border-top: 2px solid #2e7d32;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 0.95rem;
+            color: #555;
+        }
+        footer a {
+            color: #2e7d32;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        .back-link {
+            display: inline-block;
+            background: #2e7d32;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: background 0.3s;
+        }
+        .back-link:hover {
+            background: #0277bd;
+        }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeLoginModal()">&times;</span>
+            <h2>Giriş Yap</h2>
+            <form>
+                <input type="email" placeholder="E-posta Adresi" required>
+                <input type="password" placeholder="Şifre" required>
+                <button type="submit">Giriş Yap</button>
+            </form>
+            <p style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
+                Hesabınız yok mu? <a href="#" onclick="switchToSignup()" style="color: #2e7d32; text-decoration: none;">Kayıt Ol</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeSignupModal()">&times;</span>
+            <h2>Kayıt Ol</h2>
+            <form>
+                <input type="text" placeholder="Ad Soyad" required>
+                <input type="email" placeholder="E-posta Adresi" required>
+                <input type="password" placeholder="Şifre" required>
+                <input type="password" placeholder="Şifre Tekrar" required>
+                <button type="submit">Kayıt Ol</button>
+            </form>
+            <p style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
+                Zaten hesabınız var mı? <a href="#" onclick="switchToLogin()" style="color: #2e7d32; text-decoration: none;">Giriş Yap</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+    function openLoginModal() {
+        document.getElementById("loginModal").classList.add("show");
+        document.getElementById("signupModal").classList.remove("show");
+    }
+
+    function closeLoginModal() {
+        document.getElementById("loginModal").classList.remove("show");
+    }
+
+    function openSignupModal() {
+        document.getElementById("signupModal").classList.add("show");
+        document.getElementById("loginModal").classList.remove("show");
+    }
+
+    function closeSignupModal() {
+        document.getElementById("signupModal").classList.remove("show");
+    }
+
+    function switchToLogin() {
+        closeSignupModal();
+        openLoginModal();
+    }
+
+    function switchToSignup() {
+        closeLoginModal();
+        openSignupModal();
+    }
+
+    window.onclick = function(event) {
+        var loginModal = document.getElementById("loginModal");
+        var signupModal = document.getElementById("signupModal");
+        if (event.target == loginModal) {
+            loginModal.classList.remove("show");
+        }
+        if (event.target == signupModal) {
+            signupModal.classList.remove("show");
+        }
+    }
+
+    function login(email) {
+        const username = email.split('@')[0];
+        localStorage.setItem('loggedInUser', username);
+        updateAuthUI();
+        closeLoginModal();
+    }
+
+    function logout() {
+        localStorage.removeItem('loggedInUser');
+        updateAuthUI();
+    }
+
+    function updateAuthUI() {
+        const user = localStorage.getItem('loggedInUser');
+        const authButtons = document.getElementById('authButtons');
+        const userInfo = document.getElementById('userInfo');
+        
+        if (user) {
+            authButtons.style.display = 'none';
+            userInfo.classList.add('show');
+            document.getElementById('username').textContent = 'Hoşgeldin, ' + user + '!';
+        } else {
+            authButtons.style.display = 'flex';
+            userInfo.classList.remove('show');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const loginForm = document.querySelector('#loginModal form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = this.querySelector('input[type="email"]').value;
+                login(email);
+                this.reset();
+            });
+        }
+        
+        const signupForm = document.querySelector('#signupModal form');
+        if (signupForm) {
+            signupForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = this.querySelector('input[type="email"]').value;
+                login(email);
+                this.reset();
+            });
+        }
+        
+        updateAuthUI();
+    });
+    </script>
+
+    <header>
+        <div>
+            <h1>♻ Geri Dönüşüm Nedir?</h1>
+            <p>Kapsamlı Bilgilendirme ve Rehber</p>
+        </div>
+        <div class="auth-buttons" id="authButtons">
+            <button onclick="openLoginModal()">Giriş Yap</button>
+            <button class="signup" onclick="openSignupModal()">Kayıt Ol</button>
+        </div>
+        <div class="user-info" id="userInfo">
+            <span id="username"></span>
+            <button onclick="logout()">Çıkış</button>
+        </div>
+    </header>
+
+    <nav>
+        <a href="/">Ana Sayfa</a>
+        <a href="/#neden">Neden Geri Dönüşüm?</a>
+        <a href="/#turler">Atık Türleri</a>
+        <a href="/#renkler">Kutuların Renkleri</a>
+        <a href="/bilgi#tanim">Tanım</a>
+        <a href="/#iletisim">İletişim</a>
+    </nav>
+
+    <div class="container">
+        <a href="/" class="back-link">← Ana Sayfaya Dön</a>
+
+        <h2 id="tanim">Geri Dönüşüm Nedir?</h2>
+        <p>Geri dönüşüm, atık malzemelerin çeşitli işlemlerden geçirilerek yeniden ham madde olarak kullanılabilir hale getirilmesi sürecidir. Bu işlem, çevre korumasının yanı sıra ekonomik faydalar da sağlayan önemli bir çevre yönetim sürecidir. Ayrıca, doğal kaynak tüketimi azalır, enerji tasarrufu sağlanır ve çevresel kirlilik engellenir.</p>
+
+        <h3>Geri Dönüştürülebilir Atık Türleri</h3>
+        <ul>
+            <li>Kağıt ve karton</li>
+            <li>Plastik (PET, HDPE, LDPE vb.)</li>
+            <li>Cam</li>
+            <li>Metal (alüminyum, demir, çelik)</li>
+            <li>Ahşap</li>
+            <li>Elektronik atıklar (AEEE)</li>
+            <li>Organik atıklar (kompost)</li>
+        </ul>
+
+        <h2>Geri Dönüşümün Amacı</h2>
+        <p>Geri kazanım temel amacı, doğal kaynakları korumak, enerji tasarrufu sağlamak ve çevre kirliliğini azaltmaktır. Kullanılmış malzemelerin tekrar işlenerek üretime kazandırılması, hem atık miktarını azaltır hem de sürdürülebilir bir gelecek için önemli bir adımdır.</p>
+
+        <div class="highlight-box">
+            <strong>Geri dönüşüm sayesinde:</strong>
+            <ul>
+                <li>Hammadde kullanımı azalır, doğaya olan baskı hafifler</li>
+                <li>Enerji tüketimi düşer, karbon ayak izi küçülür</li>
+                <li>Atık sahalarının yükü hafifler, çevresel riskler azalır</li>
+                <li>İklim değişikliğiyle mücadeleye katkı sağlanır</li>
+                <li>Yeni iş alanları oluşur, yeşil ekonomi desteklenir</li>
+            </ul>
+        </div>
+
+        <h2>Hammadde Kullanımını Azalır</h2>
+        <p>Artan nüfusla birlikte tüketim oranları da yükselmekte, bu durum doğal kaynakların tükenme riskini artırmaktadır. Ancak geri dönüşüm sayesinde, yeni hammadde arayışına gerek kalmadan mevcut malzemeler tekrar üretimde kullanılabilir hale gelir. Bu da doğal kaynakların korunmasına yardımcı olur ve ekosistemin dengesini destekler.</p>
+
+        <h2>Enerji Tüketimi Azalır</h2>
+        <p>Geri kazanılmış malzemeleri kullanmak, yeni ürün üretiminde hammadde çıkarmaya kıyasla çok daha az enerji gerektirir; böylece enerji tasarrufu sağlanır ve sera gazı emisyonları azalır.</p>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <h4>%35-95</h4>
+                <p>Alüminyum Tasarrufu</p>
+            </div>
+            <div class="stat-box">
+                <h4>%45</h4>
+                <p>Su Tüketim Azalması</p>
+            </div>
+            <div class="stat-box">
+                <h4>%25</h4>
+                <p>Cam Enerji Tasarrufu</p>
+            </div>
+            <div class="stat-box">
+                <h4>%74-94</h4>
+                <p>Hava Kirliliği Azalması</p>
+            </div>
+        </div>
+
+        <h2>Çevresel Riskler Azalır</h2>
+        <p>Geri dönüşüm sayesinde çöpe giden atık miktarı azalır, bu da düzenli depolama alanlarının (atık sahalarının) ömrünü uzatır ve çevresel risklerin azalmasına katkı sağlar. Özellikle tehlikeli ve organik atıkların azaltılması, hava ve su kirliliğinin önlenmesinde kritik rol oynar.</p>
+
+        <h3>Kağıt Geri Dönüşümü Etkileri</h3>
+        <ul>
+            <li>Hava kirliliği %74 ila %94 oranında azalır</li>
+            <li>Su kirliliği %35 oranında düşer</li>
+            <li>Su tüketimi %45 oranında azaltılabilir</li>
+            <li>Bir ton atık kağıdın geri dönüştürülmesi, ortalama 17 ağacın kesilmesini önler</li>
+        </ul>
+
+        <h2>İklim Değişikliğiyle Mücadeleye Katkı</h2>
+        <p>İklim değişikliğiyle mücadelede kritik bir rol oynar. Atıkların geri dönüştürülmesi, hem üretim süreçlerinde hem de atık bertarafında oluşan sera gazı emisyonlarını azaltır. Bu da karbon ayak izinin düşürülmesi anlamına gelir.</p>
+
+        <h2>Yeni İş Alanları Oluşur, Yeşil Ekonomi Desteklenir</h2>
+        <p>Geri dönüşüm ve atık yönetimi faaliyetleri, yalnızca çevresel değil, aynı zamanda ekonomik fayda da sağlar. Geri dönüşüm sektörü, istihdam yaratma potansiyeli yüksek olan ve sürekli gelişen bir alandır.</p>
+
+        <h2>Atık Ayrımı Nasıl Yapılır?</h2>
+        <p>Atık ayrımı, geri dönüşümün en kritik aşamalarından biridir. Atıkların doğru kategorilere ayrılması, hem geri dönüşüm sürecinin verimliliğini artırır hem de çevreye zarar verme riskini azaltır.</p>
+
+        <h3>Atık Türleri ve Sınıflandırma</h3>
+        <ul>
+            <li><strong>Kağıt ve Karton:</strong> Gazeteler, dergiler, karton kutular, ofis kağıtları</li>
+            <li><strong>Plastik:</strong> Su şişeleri, deterjan kutuları, plastik ambalajlar</li>
+            <li><strong>Metal:</strong> Alüminyum kutular, konserve kapları, metal kapaklar</li>
+            <li><strong>Cam:</strong> Şişeler, kavanozlar, cam ambalajlar</li>
+            <li><strong>Organik:</strong> Yiyecek artıkları, meyve-sebze kabukları (kompost)</li>
+            <li><strong>Tehlikeli:</strong> Piller, elektronik, boya kutuları (özel bertaraf)</li>
+        </ul>
+
+        <h2>Geri Dönüşüm Kutuların Renk Kodları</h2>
+        <table>
+            <tr>
+                <th>Renk</th>
+                <th>Atık Türü</th>
+                <th>Örnekler</th>
+            </tr>
+            <tr>
+                <td style="background: #1976d2; color: white;"><strong>Mavi</strong></td>
+                <td>Kağıt ve Karton</td>
+                <td>Gazete, dergi, kutu</td>
+            </tr>
+            <tr>
+                <td style="background: #fbc02d;"><strong>Sarı</strong></td>
+                <td>Plastik</td>
+                <td>Şişe, kutu, ambalaj</td>
+            </tr>
+            <tr>
+                <td style="background: #388e3c; color: white;"><strong>Yeşil</strong></td>
+                <td>Cam</td>
+                <td>Şişe, kavanoz</td>
+            </tr>
+            <tr>
+                <td style="background: #757575; color: white;"><strong>Gri</strong></td>
+                <td>Evsel Atıklar</td>
+                <td>Organik, yiyecek</td>
+            </tr>
+            <tr>
+                <td style="background: #d32f2f; color: white;"><strong>Kırmızı</strong></td>
+                <td>Tehlikeli Atıklar</td>
+                <td>Piller, ilaç</td>
+            </tr>
+            <tr>
+                <td style="background: #ff6f00; color: white;"><strong>Turuncu</strong></td>
+                <td>Metal</td>
+                <td>Konserve, kapak</td>
+            </tr>
+        </table>
+
+        <h2>Evde Geri Dönüşüm Adımları</h2>
+        <h3>1. Farklı Çöp Kutuları Edinin</h3>
+        <p>Her atık türü için ayrı kutular oluşturun: kağıt, plastik, cam, metal ve organik atıklar için farklı bölmeler ayırmak, ayrıştırma işlemini kolaylaştırır.</p>
+
+        <h3>2. Atıkları Temizleyin ve Kurutun</h3>
+        <p>Özellikle plastik ve cam gibi malzemeleri geri dönüşüm kutusuna atmadan önce yıkayıp kurutmak, hijyen sağlar ve işlemi kolaylaştırır.</p>
+
+        <h3>3. Etiketleme Yapın</h3>
+        <p>Kutuların üzerine ne tür atıklar atılabileceğini belirten etiketler koyarak evdeki herkesin doğru atık ayrımını yapmasına yardımcı olun.</p>
+
+        <h3>4. Tehlikeli Atıkları Ayırın</h3>
+        <p>Piller, ampuller ve elektronik atıklar için özel bir kutu oluşturun. Bu tür atıklar belediyelerin belirli toplama noktalarına teslim edilmelidir.</p>
+
+        <h3>5. Çocukları Dahil Edin</h3>
+        <p>Evde geri dönüşüm alışkanlığı kazandırmak için çocuklara bu süreci oyunlaştırarak anlatabilirsiniz. Böylece çevre bilinci küçük yaşta gelişir.</p>
+
+        <h2>Geri Dönüştürülemeyen Atıklar</h2>
+        <p>Her atık geri dönüştürülemez. Bu tür maddelerin yanlış kutulara atılması, geri dönüşüm süreçlerini aksatabilir:</p>
+        <ul>
+            <li>Kirli ve yağlı kağıtlar (pizza kutusu, peçete)</li>
+            <li>Islak mendiller, çocuk bezi, hijyenik pedler</li>
+            <li>Seramik, porselen ve ayna parçaları</li>
+            <li>Streç film, köpük tabak, plastik pipet</li>
+            <li>Boya kutuları, ilaç kutuları (özel bertaraf)</li>
+        </ul>
+
+        <h2>Türkiye'de Geri Dönüşüm Oranları</h2>
+        <p>Türkiye, son yıllarda geri dönüşüm alanında önemli adımlar atsa da hâlâ sahip olduğu büyük potansiyelin gerisindedir.</p>
+
+        <div class="highlight-box">
+            <strong>Mevcut Durum:</strong>
+            <ul>
+                <li>Türkiye'de toplam atıkların yalnızca %13-15'i etkin bir şekilde geri dönüştürülmektedir</li>
+                <li>Geri dönüşüm sektörü her yıl gelişme gösterse de, atıkların büyük bir kısmı hâlâ düzenli depolama alanlarına gönderilmektedir</li>
+                <li>Özellikle ambalaj atıkları, organik atıklar ve tekstil atıkları gibi alanlarda geri kazanım açısından ciddi fırsatlar mevcuttur</li>
+            </ul>
+        </div>
+
+        <h2>Avrupa Ülkeleriyle Karşılaştırmalar</h2>
+        <table>
+            <tr>
+                <th>Ülke</th>
+                <th>Geri Dönüşüm Oranı (%)</th>
+            </tr>
+            <tr>
+                <td>Almanya</td>
+                <td>%67</td>
+            </tr>
+            <tr>
+                <td>Avusturya</td>
+                <td>%58</td>
+            </tr>
+            <tr>
+                <td>Belçika</td>
+                <td>%54</td>
+            </tr>
+            <tr>
+                <td>Hollanda</td>
+                <td>%52</td>
+            </tr>
+            <tr>
+                <td><strong>Türkiye</strong></td>
+                <td><strong>%13-15</strong></td>
+            </tr>
+        </table>
+
+        <h2>Geri Dönüşümde Sık Yapılan Hatalar</h2>
+
+        <h3>1. Kutulara Yanlış Atık Atmak</h3>
+        <ul>
+            <li>Yağlı pizza kutusunun kağıt kutusuna atılması</li>
+            <li>Cam olmayan pencere camı veya ayna gibi ürünlerin cam kutularına atılması</li>
+            <li>Plastik oyuncakların ambalaj plastikleriyle karıştırılması</li>
+            <li>Pillerin normal çöp kutusuna atılması</li>
+        </ul>
+
+        <h3>2. Kirli Ürünlerin Sorunları</h3>
+        <p>Yoğurt kapları, su şişeleri veya konserve kutuları yıkanmadan kutuya atıldığında geri dönüşüm süreci sekteye uğrar. Kirli ürünler, tüm toplama partisinin kontamine olmasına neden olabilir.</p>
+
+        <p><strong>Doğru Yöntem:</strong> Geri dönüşüme atmadan önce ürünleri su ile hızlıca durulamak, organik kalıntılardan arındırmak yeterlidir.</p>
+
+        <h2>Küçük Adımlar, Büyük Etkiler</h2>
+
+        <h3>1 Ton Kağıt = 17 Ağaç Kurtarılır</h3>
+        <p>Kullanılmış kağıtların geri dönüştürülmesi, doğrudan ormanların korunmasına katkı sağlar. Sadece 1 ton atık kağıdın geri kazanımı, ortalama 17 ağacın kesilmesini önler.</p>
+
+        <h3>Alüminyum: %95'e Varan Enerji Tasarrufu</h3>
+        <p>Alüminyum kutular, geri dönüşüm açısından en değerli materyallerden biridir. Sadece bir alüminyum kutunun geri dönüştürülmesi, bir televizyonun 3 saat çalışmasına yetecek kadar enerji tasarrufu anlamına gelir.</p>
+
+        <h3>Bireysel Alışkanlıklar, Küresel Değişimi Başlatır</h3>
+        <ul>
+            <li>Bir aile, evinde haftalık ambalaj atıklarını ayırarak yılda yüzlerce kilogram atığın çöpe gitmesini önleyebilir</li>
+            <li>Cam şişelerin her dönüşümüyle hammadde ihtiyacı azalır, doğa daha az zarar görür</li>
+            <li>Elektronik atıklarını doğru yere teslim eden biri, toprağın ve suyun zehirlenmesini önler</li>
+        </ul>
+
+        <h2>Geri Dönüşümle Geleceği Koru</h2>
+        <p>Geri dönüşüm, çevreyi korumanın ötesinde; enerji tasarrufu, ekonomik katkı ve kaynakların sürdürülebilirliği açısından hayati bir süreçtir. Her bireyin bilinçli hareketi, küresel ölçekte olumlu sonuçlar doğurabilir.</p>
+
+        <div class="highlight-box">
+            <strong>Unutmayın:</strong> "Benim bir şişe plastik atmam neyi değiştirir ki?" düşüncesi, aslında en büyük yanılgılardan biridir. Küçük adımlar, büyük etkiler yaratır. Bugün geri dönüştürdüğünüz her malzeme, yarının daha temiz dünyası için bir adımdır.
+        </div>
+    </div>
+
+    <footer>
+        <p><strong>© 2025 Geri Dönüşüm Bilgilendirme Sistemi – Tüm hakları saklıdır.</strong></p>
+        <p>Doğa için geri dönüştürüyoruz. Çevreyi korumak hepimizin sorumluluğu.</p>
+        <p>İletişim: <a href="tel:05373148806">0537 314 8806</a> | <a href="mailto:info@geridosumsistemi.org">info@geridosumsistemi.org</a></p>
+    </footer>
+</body>
+</html>

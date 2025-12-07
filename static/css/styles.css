@@ -1,0 +1,141 @@
+/* Background for a wide bird's-eye world image.
+   Place a high-resolution bird's-eye world image at:
+   `static/images/world.jpg`
+   or use an external URL (example commented below).
+*/
+
+/* Apply background image. Replace URL with your own image path or external link. */
+body.bg-world {
+  /* High-resolution Earth-from-space photo (Unsplash). Replace with your own if needed. */
+  background-image: url("https://images.unsplash.com/photo-1473205437034-56f0d0f0a0f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2400&q=90");
+  background-size: cover; /* cover will scale and crop to fill */
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* keeps image fixed while scrolling */
+  min-height: 100vh;
+}
+
+/* Light overlay for readability (tweak alpha as needed) */
+body.bg-world::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  /* lighter overlay so the photo shows through but text remains readable */
+  background: rgba(255,255,255,0.55);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ensure content sits above the background/overlay */
+.container, header, nav, footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Parallax Hero Styles ---------- */
+.parallax-hero {
+  position: relative;
+  width: 100%;
+  height: 60vh;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.parallax-hero .layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  will-change: transform;
+  transform: translateY(0);
+}
+
+.parallax-hero .layer-back {
+  /* Deep-space Earth view */
+  background-image: url("https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2400&q=90");
+  filter: saturate(0.95) contrast(1.05) brightness(0.95);
+  z-index: 0;
+}
+.parallax-hero .layer-mid {
+  /* Starfield / subtle cloud layer to add depth */
+  background-image: url("https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=60");
+  opacity: 0.9;
+  z-index: 1;
+  mix-blend-mode: normal;
+}
+.parallax-hero .layer-front {
+  background: linear-gradient(rgba(0,0,0,0.05), rgba(0,0,0,0.15));
+  z-index: 2;
+}
+
+.parallax-hero .hero-content {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  color: #ffffff;
+  padding: 0 20px;
+  max-width: 900px;
+}
+.parallax-hero h1 {
+  font-size: clamp(1.6rem, 3.5vw, 3rem);
+  margin: 0 0 8px 0;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.45);
+}
+.parallax-hero p {
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  margin: 0 0 16px 0;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.35);
+}
+.parallax-hero .cta {
+  display: inline-block;
+  background: #2e7d32;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(46,125,50,0.25);
+}
+
+@media (max-width: 600px) {
+  .parallax-hero { height: 48vh; }
+  .parallax-hero h1 { font-size: 1.6rem; }
+}
+
+/* Footer and contact section styling */
+footer {
+  background: #f9f9f9;
+  margin-top: 30px;
+  padding: 20px;
+  border-top: 2px solid #2e7d32;
+  text-align: center;
+  font-size: 13px;
+  color: #555;
+}
+
+footer a, #iletisim a {
+  color: #2e7d32;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+footer a:hover, #iletisim a:hover {
+  text-decoration: underline;
+  color: #1b5e20;
+}
+
+/* Example: use an external Unsplash image instead of a local file
+   Uncomment the following block and comment out the local url line above.
+*/
+/*
+body.bg-world {
+  background-image: url("https://images.unsplash.com/photo-1502920917128-1aa500764b0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2400&q=80");
+}
+*/

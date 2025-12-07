@@ -7,16 +7,144 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            background: #f4f4f4;
+            background: transparent;
         }
         header {
             background: #2e7d32;
             color: white;
             padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header > div:first-child {
             text-align: center;
+            flex: 1;
+        }
+        header h1 {
+            margin: 0 0 5px 0;
+        }
+        header p {
+            margin: 0;
+        }
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .auth-buttons button {
+            background: white;
+            color: #2e7d32;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .auth-buttons button:hover {
+            background: #a5d6a7;
+        }
+        .auth-buttons button.signup {
+            background: #fbc02d;
+            color: #000;
+        }
+        .auth-buttons button.signup:hover {
+            background: #f9a825;
+        }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .modal-content h2 {
+            margin-top: 0;
+            color: #2e7d32;
+        }
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-content input {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .modal-content input:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 5px #2e7d32;
+        }
+        .modal-content button {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .modal-content button:hover {
+            background: #0277bd;
+        }
+        .modal-close {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+        .modal-close:hover {
+            color: #000;
+        }
+        .user-info {
+            display: none;
+            color: white;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-info.show {
+            display: flex;
+        }
+        .user-info span {
+            font-weight: bold;
+        }
+        .user-info button {
+            background: white;
+            color: #2e7d32;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .user-info button:hover {
+            background: #a5d6a7;
         }
         nav {
-            background: #1b5e20;
+            background: #0288d1;
             color: white;
             padding: 10px;
             text-align: center;
@@ -66,20 +194,190 @@
             color: #555;
         }
     </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
-<body>
+<body class="bg-world">
 
 <header>
-    <h1>♻ Geri Dönüşüm Bilgilendirme Sistemi</h1>
-    <p>Çevreyi korumak için küçük adımlar, büyük etkiler.</p>
+    <div>
+        <h1>♻ Geri Dönüşüm Bilgilendirme Sistemi</h1>
+        <p>Çevreyi korumak için küçük adımlar, büyük etkiler.</p>
+    </div>
+    <div class="auth-buttons" id="authButtons">
+        <button onclick="openLoginModal()">Giriş Yap</button>
+        <button class="signup" onclick="openSignupModal()">Kayıt Ol</button>
+    </div>
+    <div class="user-info" id="userInfo">
+        <span id="username"></span>
+        <button onclick="logout()">Çıkış</button>
+    </div>
 </header>
+
+<!-- Login Modal -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeLoginModal()">&times;</span>
+        <h2>Giriş Yap</h2>
+        <form>
+            <input type="email" placeholder="E-posta Adresi" required>
+            <input type="password" placeholder="Şifre" required>
+            <button type="submit">Giriş Yap</button>
+        </form>
+        <p style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
+            Hesabınız yok mu? <a href="#" onclick="switchToSignup()" style="color: #2e7d32; text-decoration: none;">Kayıt Ol</a>
+        </p>
+    </div>
+</div>
+
+<!-- Signup Modal -->
+<div id="signupModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeSignupModal()">&times;</span>
+        <h2>Kayıt Ol</h2>
+        <form>
+            <input type="text" placeholder="Ad Soyad" required>
+            <input type="email" placeholder="E-posta Adresi" required>
+            <input type="password" placeholder="Şifre" required>
+            <input type="password" placeholder="Şifre Tekrar" required>
+            <button type="submit">Kayıt Ol</button>
+        </form>
+        <p style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
+            Zaten hesabınız var mı? <a href="#" onclick="switchToLogin()" style="color: #2e7d32; text-decoration: none;">Giriş Yap</a>
+        </p>
+    </div>
+</div>
+
+<script>
+function openLoginModal() {
+    document.getElementById("loginModal").classList.add("show");
+    document.getElementById("signupModal").classList.remove("show");
+}
+
+function closeLoginModal() {
+    document.getElementById("loginModal").classList.remove("show");
+}
+
+function openSignupModal() {
+    document.getElementById("signupModal").classList.add("show");
+    document.getElementById("loginModal").classList.remove("show");
+}
+
+function closeSignupModal() {
+    document.getElementById("signupModal").classList.remove("show");
+}
+
+function switchToLogin() {
+    closeSignupModal();
+    openLoginModal();
+}
+
+function switchToSignup() {
+    closeLoginModal();
+    openSignupModal();
+}
+
+function login(email) {
+    // E-postadan kullanıcı adı çıkar (@ öncesi)
+    const username = email.split('@')[0];
+    
+    // localStorage'a kaydet
+    localStorage.setItem('loggedInUser', username);
+    
+    // UI güncelle
+    updateAuthUI();
+    
+    // Modal kapat
+    closeLoginModal();
+}
+
+function logout() {
+    // localStorage'dan sil
+    localStorage.removeItem('loggedInUser');
+    
+    // UI güncelle
+    updateAuthUI();
+}
+
+function updateAuthUI() {
+    const user = localStorage.getItem('loggedInUser');
+    const authButtons = document.getElementById('authButtons');
+    const userInfo = document.getElementById('userInfo');
+    
+    if (user) {
+        // Giriş yapılmış
+        authButtons.style.display = 'none';
+        userInfo.classList.add('show');
+        document.getElementById('username').textContent = 'Hoşgeldin, ' + user + '!';
+    } else {
+        // Giriş yapılmamış
+        authButtons.style.display = 'flex';
+        userInfo.classList.remove('show');
+    }
+}
+
+// Form submit işlemini yakala
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.querySelector('#loginModal form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = this.querySelector('input[type="email"]').value;
+            login(email);
+            this.reset();
+        });
+    }
+    
+    const signupForm = document.querySelector('#signupModal form');
+    if (signupForm) {
+        signupForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = this.querySelector('input[type="email"]').value;
+            login(email);
+            this.reset();
+        });
+    }
+    
+    // Sayfa yüklendiğinde UI kontrol et
+    updateAuthUI();
+});
+
+// Modal dışına tıklandığında kapat
+window.onclick = function(event) {
+    var loginModal = document.getElementById("loginModal");
+    var signupModal = document.getElementById("signupModal");
+    if (event.target == loginModal) {
+        loginModal.classList.remove("show");
+    }
+    if (event.target == signupModal) {
+        signupModal.classList.remove("show");
+    }
+}
+</script>
 
 <nav>
     <a href="#neden">Neden Geri Dönüşüm?</a>
     <a href="#turler">Atık Türleri</a>
     <a href="#renkler">Kutuların Renkleri</a>
+    <a href="/bilgi">Geri Dönüşüm Nedir?</a>
+    <a href="#faaliyetler">Faaliyetler</a>
+    <a href="#iletisim">İletişim</a>
     <a href="#ekip">Proje Ekibi</a>
 </nav>
+
+<!-- Parallax hero: kuş bakışı / geri dönüşüm temalı görsel ile hareketli arka plan -->
+<section class="parallax-hero">
+    <div class="layer layer-back" aria-hidden="true"></div>
+    <div class="layer layer-mid" aria-hidden="true"></div>
+    <div class="layer layer-front" aria-hidden="true"></div>
+    <div class="hero-content">
+        <h1>Geri Dönüşümle Geleceğe Adım At</h1>
+        <p>Doğa için küçük bir adım atın — bugün geri dönüştürmeye başlayın.</p>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <a class="cta" href="#neden">Nasıl Başlanır?</a>
+            <a class="cta" href="/bilgi" style="background: #1565c0;">Detaylı Bilgi</a>
+        </div>
+    </div>
+</section>
 
 <div class="container" id="neden">
     <h2>Neden Geri Dönüşüm Önemlidir?</h2>
@@ -111,6 +409,29 @@
     </div>
 </div>
 
+<div class="container" id="faaliyetler">
+    <h2>Faaliyetler</h2>
+    <ul>
+        <li><strong>Çevre Temizliği Etkinlikleri:</strong> Ayda bir kez organize edilen parklar ve plajlar temizlik kampanyaları.</li>
+        <li><strong>Eğitim Atölyesi:</strong> Okullara ve kurumlara geri dönüşüm hakkında bilgilendirme ve pratik atölyeler düzenliyoruz.</li>
+        <li><strong>Geri Dönüşüm Sürüşü:</strong> İlçelerde geri dönüşüm bilinçlendirme ve toplama noktaları hakkında bilgi veren mobil etkinlikler.</li>
+        <li><strong>Sosyal Medya Kampanyaları:</strong> #GeriDönüşBirHayata etiketi ile farkındalık yaratıyoruz.</li>
+    </ul>
+</div>
+
+<div class="container" id="iletisim">
+    <h2>İletişim</h2>
+    <p><strong>E-posta:</strong> <a href="mailto:info@geridosumsistemi.org">info@geridosumsistemi.org</a></p>
+    <p><strong>Telefon:</strong> <a href="tel:05373148806">0537 314 8806</a></p>
+    <p><strong>Adres:</strong> Ankara, Sincan, Türkiye</p>
+    <p><strong>Sosyal Medya:</strong></p>
+    <ul>
+        <li><a href="#">Facebook</a></li>
+        <li><a href="#">Twitter / X</a></li>
+        <li><a href="#">Instagram</a></li>
+    </ul>
+</div>
+
 <div class="container" id="ekip">
     <h2>Proje Ekibi</h2>
     <p>Bu site, Geri Dönüşüm Bilgilendirme Sistemi grup projesi kapsamında hazırlanmıştır.</p>
@@ -123,7 +444,68 @@
 
 <footer>
     <p>© 2025 Geri Dönüşüm Bilgilendirme Sistemi – Tüm hakları saklıdır.</p>
+    <p>Doğa için geri dönüştürüyoruz. Çevreyi korumak hepimizin sorumluluğu.</p>
 </footer>
+</footer>
+
+<script>
+// Parallax on scroll + mouse movement for interactive background effect
+(function(){
+    const layers = document.querySelectorAll('.parallax-hero .layer');
+    if(!layers.length) return;
+    
+    let latestKnownScrollY = 0;
+    let latestMouseX = 0;
+    let latestMouseY = 0;
+    let ticking = false;
+
+    function onScroll(){
+        latestKnownScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onMouseMove(e){
+        latestMouseX = e.clientX;
+        latestMouseY = e.clientY;
+        requestTick();
+    }
+
+    function requestTick(){
+        if(!ticking){
+            requestAnimationFrame(update);
+            ticking = true;
+        }
+    }
+
+    function update(){
+        const scrolled = latestKnownScrollY;
+        // normalize mouse position (-1 to 1)
+        const mouseXPercent = (latestMouseX / window.innerWidth) * 2 - 1;
+        const mouseYPercent = (latestMouseY / window.innerHeight) * 2 - 1;
+        
+        // depths for each layer (back, mid, front)
+        const depths = [0.18, 0.35, 0.6];
+        const mouseDepths = [15, 25, 35]; // pixel offset per mouse movement
+        
+        layers.forEach((layer, i) => {
+            const depth = depths[i] || 0.3;
+            const mouseDepth = mouseDepths[i] || 20;
+            
+            const translateY = scrolled * depth + (mouseYPercent * mouseDepth);
+            const translateX = mouseXPercent * mouseDepth * 0.5;
+            
+            layer.style.transform = `translate(${translateX}px, ${translateY}px)`;
+        });
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive:true});
+    window.addEventListener('mousemove', onMouseMove, {passive:true});
+    
+    // initial position
+    update();
+})();
+</script>
 
 </body>
 </html>

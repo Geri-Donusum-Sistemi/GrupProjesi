@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 800" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sea" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#4aa3e0"/>
+      <stop offset="1" stop-color="#2b79b6"/>
+    </linearGradient>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence baseFrequency="0.8" numOctaves="2" stitchTiles="stitch" result="t"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feBlend in="SourceGraphic" in2="t" mode="overlay"/>
+    </filter>
+  </defs>
+
+  <!-- sea background -->
+  <rect width="100%" height="100%" fill="url(#sea)"/>
+
+  <!-- stylized continents (simple shapes for placeholder) -->
+  <g transform="translate(0,40) scale(1)">
+    <path d="M200 320 C 260 220, 380 180, 520 200 C 680 220, 740 320, 860 300 C 940 288, 980 240, 1060 220 C 1140 200, 1220 240, 1300 280 C 1420 330, 1560 350, 1700 320 C 1840 290, 1960 300, 2080 360 C 2200 420, 2280 520, 2340 600 L2340 760 L60 760 L60 600 C80 520, 140 420, 200 320 Z" fill="#9ed86a" opacity="0.95"/>
+    <path d="M300 200 C 340 150, 420 120, 520 140 C 640 170, 700 260, 860 260 C 950 260, 1000 220, 1080 210 C 1180 200, 1260 240, 1340 270 C 1460 310, 1580 320, 1700 290 C 1770 270, 1840 260, 1920 270 C 2000 280, 2060 320, 2140 370 C 2200 410, 2260 460, 2320 520 C 2100 500, 1900 460, 1700 440 C 1500 420, 1300 420, 1100 400 C 900 380, 700 260, 520 230 C 420 210, 360 210, 300 200 Z" fill="#77b83a" opacity="0.9"/>
+  </g>
+
+  <!-- some islands -->
+  <circle cx="400" cy="120" r="18" fill="#7bbf3b" />
+  <circle cx="520" cy="80" r="12" fill="#7bbf3b" />
+  <circle cx="1880" cy="160" r="22" fill="#7bbf3b" />
+
+  <!-- subtle vignette -->
+  <radialGradient id="vign" cx="50%" cy="50%">
+    <stop offset="0%" stop-color="#000" stop-opacity="0"/>
+    <stop offset="100%" stop-color="#000" stop-opacity="0.25"/>
+  </radialGradient>
+  <rect width="100%" height="100%" fill="url(#vign)"/>
+
+</svg>
