@@ -4,6 +4,48 @@
    or use an external URL (example commented below).
 */
 
+/* Language Toggle */
+.language-toggle {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  display: flex;
+  gap: 8px;
+  z-index: 10000;
+}
+
+.lang-flag {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  border: 2px solid transparent;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.lang-flag[data-lang="tr"] {
+  background: #d32f2f;
+}
+
+.lang-flag[data-lang="en"] {
+  background: #d32f2f;
+}
+
+.lang-flag:hover {
+  transform: scale(1.05);
+  border-color: white;
+}
+
+.lang-flag.active {
+  border-color: gold;
+  box-shadow: 0 0 10px rgba(251, 192, 45, 0.8);
+}
+
 /* Apply background image. Replace URL with your own image path or external link. */
 body.bg-world {
   /* High-resolution Earth-from-space photo (Unsplash). Replace with your own if needed. */
