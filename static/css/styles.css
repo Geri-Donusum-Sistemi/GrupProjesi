@@ -222,6 +222,13 @@ body.bg-world {
   --site-green: #2e7d32; /* header color preserved in dark mode */
 }
 
+:root.dark {
+  --bg-color: #0f1720;
+  --panel-bg: #1a232e;
+  --text-color: #e6eef6;
+  --muted: #9fb0c8;
+}
+
 .dark {
   --bg-color: #0f1720;
   --panel-bg: #0b1220;
@@ -247,6 +254,71 @@ header {
 /* Force header and top nav backgrounds to remain unchanged in dark mode */
 header { background: #2e7d32 !important; }
 nav { background: #0288d1 !important; color: #ffffff !important; }
+
+/* Comprehensive dark theme overrides */
+:root.dark body {
+  background-color: #0f1720 !important;
+  color: #e6eef6 !important;
+}
+
+:root.dark .container {
+  background-color: #1a232e !important;
+  color: #e6eef6 !important;
+}
+
+:root.dark h1, :root.dark h2, :root.dark h3, :root.dark h4, :root.dark h5, :root.dark h6 {
+  color: #4ade80 !important;
+}
+
+:root.dark p, :root.dark li, :root.dark span, :root.dark div, :root.dark table {
+  color: #e6eef6 !important;
+}
+
+:root.dark footer {
+  background-color: #1a232e !important;
+  border-top-color: #4ade80 !important;
+  color: #e6eef6 !important;
+}
+
+:root.dark footer a, :root.dark footer p {
+  color: #e6eef6 !important;
+}
+
+:root.dark a {
+  color: #4ade80 !important;
+}
+
+:root.dark table th {
+  background-color: #1e3a28 !important;
+  color: #ffffff !important;
+  border-color: #444 !important;
+}
+
+:root.dark table td {
+  background-color: transparent !important;
+  color: #e6eef6 !important;
+  border-color: #444 !important;
+}
+
+:root.dark table tr:nth-child(even) td {
+  background-color: #151d27 !important;
+}
+
+:root.dark .highlight-box {
+  background-color: #1e3a28 !important;
+  border-left-color: #4ade80 !important;
+  color: #e6eef6 !important;
+}
+
+:root.dark button:not(.signup) {
+  background-color: #4ade80 !important;
+  color: #000 !important;
+}
+
+:root.dark button.signup {
+  background-color: #f59e0b !important;
+  color: #000 !important;
+}
 
 /* Parallax hero should sit above the body overlay so its visuals aren't dimmed */
 .parallax-hero { position: relative; z-index: 1100; overflow: hidden; background-color: #08121a; /* dark fallback behind layers to hide any tiny gaps */ }

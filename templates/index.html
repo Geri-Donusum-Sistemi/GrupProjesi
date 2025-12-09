@@ -412,10 +412,10 @@ window.onclick = function(event) {
     <div id="hover-neden" class="hover-panel" aria-hidden="true">
         <h2 data-i18n="why-heading">Neden Geri Dönüşüm Önemlidir?</h2>
         <ul>
-            <li>Doğal kaynakların daha verimli kullanılmasını sağlar.</li>
-            <li>Enerji tasarrufu sağlar.</li>
-            <li>Çöp miktarını ve çevre kirliliğini azaltır.</li>
-            <li>Gelecek nesiller için daha temiz bir dünya bırakmamıza yardım eder.</li>
+            <li data-i18n="why-item1">Doğal kaynakların daha verimli kullanılmasını sağlar.</li>
+            <li data-i18n="why-item2">Enerji tasarrufu sağlar.</li>
+            <li data-i18n="why-item3">Çöp miktarını ve çevre kirliliğini azaltır.</li>
+            <li data-i18n="why-item4">Gelecek nesiller için daha temiz bir dünya bırakmamıza yardım eder.</li>
         </ul>
     </div>
     
@@ -431,7 +431,7 @@ window.onclick = function(event) {
         <h1 data-i18n="hero-title">Geri Dönüşümle Geleceğe Adım At</h1>
         <p data-i18n="hero-subtitle">Doğa için küçük bir adım atın — bugün geri dönüştürmeye başlayın.</p>
         <div style="display: flex; gap: 10px; justify-content: center;">
-            <a class="cta" href="/bilgi" style="background: #1565c0;">Detayli Bilgi</a>
+            <a class="cta" href="/bilgi" style="background: #1565c0;" data-i18n="detailed-info">Detaylı Bilgi</a>
         </div>
     </div>
 </section>
@@ -516,18 +516,18 @@ window.onclick = function(event) {
 <div class="container" id="renkler">
     <h2 data-i18n="bin-colors">Geri Dönüşüm Kutularının Renkleri</h2>
     <div class="kutular">
-        <div class="kutu kagit">MAVİ<br>Kağıt / Karton</div>
-        <div class="kutu plastik">SARI<br>Plastik</div>
-        <div class="kutu cam">YEŞİL<br>Cam</div>
-        <div class="kutu metal">GRİ<br>Metal</div>
-        <div class="kutu organik">KAHVERENGİ<br>Organik</div>
-        <div class="kutu siyah">SİYAH<br>Geri Dönüşemeyen</div>
-        <div class="kutu tibbi">KIRMIZI<br>Tibbi</div>
-        <div class="kutu seffaf">SEFFAF<br>Tehlikeli / Elektronik</div>
+        <div class="kutu kagit" data-i18n-html="blue-box">MAVİ<br>Kağıt / Karton</div>
+        <div class="kutu plastik" data-i18n-html="yellow-box">SARI<br>Plastik</div>
+        <div class="kutu cam" data-i18n-html="green-box">YEŞİL<br>Cam</div>
+        <div class="kutu metal" data-i18n-html="grey-box">GRİ<br>Metal</div>
+        <div class="kutu organik" data-i18n-html="brown-box">KAHVERENGİ<br>Organik</div>
+        <div class="kutu siyah" data-i18n-html="black-box">SİYAH<br>Geri Dönüşemeyen</div>
+        <div class="kutu tibbi" data-i18n-html="red-box">KIRMIZI<br>Tibbi</div>
+        <div class="kutu seffaf" data-i18n-html="clear-box">SEFFAF<br>Tehlikeli / Elektronik</div>
     </div>
     <!-- Detay panelleri: kutulara tıklayınca açılacak bilgiler -->
     <div id="kagitDetails" class="kutu-details kagit" aria-hidden="true">
-        <h3>Mavi Kutuda Neler Atılır?</h3>
+        <h3 data-i18n="blue-heading">Mavi Kutuda Neler Atılır?</h3>
         <ul>
             <li>Gazete ve dergiler</li>
             <li>Karton kutular (temiz ve kuru)</li>
@@ -536,67 +536,67 @@ window.onclick = function(event) {
             <li>Ofis kağıtları, fotokopi kağıdı</li>
             <li>Kağıt ambalajlar (içerikleri boşaltılmış ve temizlenmiş)</li>
         </ul>
-        <h3>Neden Bunları Atmalıyız?</h3>
-        <p>Kağıt materyaller geri dönüştürüldüğünde ağaç ihtiyacı azalır, enerji tasarrufu sağlanır ve atık miktarı küçülür. Kirli veya yağlı kağıtlar (ör. yağlı pizza kutuları) geri dönüşüm sürecini bozabileceği için genellikle ayrılmalıdır.</p>
+        <h3 data-i18n="why-should-throw">Neden Bunları Atmalıyız?</h3>
+        <p data-i18n="blue-desc">Kağıt materyaller geri dönüştürüldüğünde ağaç ihtiyacı azalır, enerji tasarrufu sağlanır ve atık miktarı küçülür. Kirli veya yağlı kağıtlar (ör. yağlı pizza kutuları) geri dönüşüm sürecini bozabileceği için genellikle ayrılmalıdır.</p>
     </div>
 
     <div id="plastikDetails" class="kutu-details plastik" aria-hidden="true">
-        <h3>Sarı Kutuda Neler Atılır?</h3>
+        <h3 data-i18n="yellow-heading">Sarı Kutuda Neler Atılır?</h3>
         <ul>
             <li>Plastik su ve içecek şişeleri (boş ve kapağı çıkarılmış)</li>
             <li>Plastik kaplar ve kutular (içerikler temizlenmiş)</li>
             <li>Plastik torbalar (biriktirilip temizlenmiş)</li>
             <li>Ambalaj plastikleri (etiket ve kir varsa temizlenmiş)</li>
         </ul>
-        <h3>Neden Bunları Atmalıyız?</h3>
-        <p>Plastikler uygun şekilde ayrıldığında tekrar işlenebilir; doğada çok uzun süre kalırlar ve doğru geri dönüşüm çevre kirliliğini azaltır. Kirli plastikler geri dönüşüm işlemini zorlaştırır.</p>
+        <h3 data-i18n="why-should-throw">Neden Bunları Atmalıyız?</h3>
+        <p data-i18n="yellow-desc">Plastikler uygun şekilde ayrıldığında tekrar işlenebilir; doğada çok uzun süre kalırlar ve doğru geri dönüşüm çevre kirliliğini azaltır. Kirli plastikler geri dönüşüm işlemini zorlaştırır.</p>
     </div>
 
     <div id="camDetails" class="kutu-details cam" aria-hidden="true">
-        <h3>Yeşil Kutuda Neler Atılır?</h3>
+        <h3 data-i18n="green-heading">Yeşil Kutuda Neler Atılır?</h3>
         <ul>
             <li>Cam şişeler ve kavanozlar</li>
             <li>Cam ambalajlar (cerrahi cam, porselen vb. değil)</li>
         </ul>
-        <h3>Neden Bunları Atmalıyız?</h3>
-        <p>Cam sınırsız sayıda geri dönüştürülebilir; cam atıkların ayrılması enerji tasarrufu sağlar ve ham madde kullanımını azaltır. Cam kırıkları dikkatlice paketlenmelidir.</p>
+        <h3 data-i18n="why-should-throw">Neden Bunları Atmalıyız?</h3>
+        <p data-i18n="green-desc">Cam sınırsız sayıda geri dönüştürülebilir; cam atıkların ayrılması enerji tasarrufu sağlar ve ham madde kullanımını azaltır. Cam kırıkları dikkatlice paketlenmelidir.</p>
     </div>
 
     <div id="metalDetails" class="kutu-details metal" aria-hidden="true">
-        <h3>Gri Kutuda Neler Atılır?</h3>
+        <h3 data-i18n="grey-heading">Gri Kutuda Neler Atılır?</h3>
         <ul>
             <li>Konserve kutuları</li>
             <li>İçecek kutuları (alüminyum)</li>
             <li>Metal kapaklar ve küçük metal parçalar</li>
         </ul>
-        <h3>Neden Bunları Atmalıyız?</h3>
-        <p>Metaller geri dönüştürüldüğünde yeni ürün üretmek için daha az enerji harcanır. Metal atıklar sıkıştırılabilir ve geri dönüşüm verimliliğini artırır.</p>
+        <h3 data-i18n="why-should-throw">Neden Bunları Atmalıyız?</h3>
+        <p data-i18n="grey-desc">Metaller geri dönüştürüldüğünde yeni ürün üretmek için daha az enerji harcanır. Metal atıklar sıkıştırılabilir ve geri dönüşüm verimliliğini artırır.</p>
     </div>
     <div id="organikDetails" class="kutu-details organik" aria-hidden="true">
-        <h3>Kahverengi Kutuda Neler Atılır?</h3>
-        <p>Organik atıklar; yemek artıkları, bahçe atıkları ve kompostlanabilir maddeler buraya atılır. Ayrıştırma toprağa geri dönüşüm sağlar.</p>
+        <h3 data-i18n="brown-heading">Kahverengi Kutuda Neler Atılır?</h3>
+        <p data-i18n="brown-desc">Organik atıklar; yemek artıkları, bahçe atıkları ve kompostlanabilir maddeler buraya atılır. Ayrıştırma toprağa geri dönüşüm sağlar.</p>
     </div>
     <div id="siyahDetails" class="kutu-details siyah" aria-hidden="true">
-        <h3>Siyah Kutuda Neler Atılır?</h3>
-        <p>Geri dönüşümü mümkün olmayan evsel atıklar (kirli paketlemeler, küçük kırık eşyalar) siyah kutuda toplanır ve bertaraf edilir.</p>
+        <h3 data-i18n="black-heading">Siyah Kutuda Neler Atılır?</h3>
+        <p data-i18n="black-desc">Geri dönüşümü mümkün olmayan evsel atıklar (kirli paketlemeler, küçük kırık eşyalar) siyah kutuda toplanır ve bertaraf edilir.</p>
     </div>
     <div id="tibbiDetails" class="kutu-details tibbi" aria-hidden="true">
-        <h3>Tibbi Atiklar (Kirmizi)</h3>
-        <p>Tibbi atiklar kirmizi kutu veya posetlerde toplanmalidir; sivri nesneler delinmeye dayanikli kutularda ayrica isaretlenmelidir.</p>
+        <h3 data-i18n="red-heading">Tibbi Atiklar (Kirmizi)</h3>
+        <p data-i18n="red-desc">Tibbi atiklar kirmizi kutu veya posetlerde toplanmalidir; sivri nesneler delinmeye dayanikli kutularda ayrica isaretlenmelidir.</p>
     </div>
     <div id="seffafDetails" class="kutu-details seffaf" aria-hidden="true">
-        <h3>Şeffaf Kutuda Neler Atılır?</h3>
-        <p>Tehlikeli atıklar ve elektronik atıklar (piller, küçük elektronik cihazlar) şeffaf ambalaj veya ayrı toplama noktalarında toplanır. Güvenli teslim önemlidir.</p>
+        <h3 data-i18n="clear-heading">Şeffaf Kutuda Neler Atılır?</h3>
+        <p data-i18n="clear-desc">Tehlikeli atıklar ve elektronik atıklar (piller, küçük elektronik cihazlar) şeffaf ambalaj veya ayrı toplama noktalarında toplanır. Güvenli teslim önemlidir.</p>
     </div>
 </div>
 
 <div class="container" id="faaliyetler">
     <h2 data-i18n="activities">Faaliyetler</h2>
     <ul>
-        <li><strong>Çevre Temizliği Etkinlikleri:</strong> Ayda bir kez organize edilen parklar ve plajlar temizlik kampanyaları.</li>
-        <li><strong>Eğitim Atölyesi:</strong> Okullara ve kurumlara geri dönüşüm hakkında bilgilendirme ve pratik atölyeler düzenliyoruz.</li>
-        <li><strong>Geri Dönüşüm Sürüşü:</strong> İlçelerde geri dönüşüm bilinçlendirme ve toplama noktaları hakkında bilgi veren mobil etkinlikler.</li>
-        <li><strong>Sosyal Medya Kampanyaları:</strong> #GeriDönüşBirHayata etiketi ile farkındalık yaratıyoruz.</li>
+        <li><strong data-i18n="activity-1-title">Çevre Temizliği Etkinlikleri:</strong> <span data-i18n="activity-1-desc">Ayda bir kez organize edilen parklar ve plajlar temizlik kampanyaları.</span></li>
+        <li><strong data-i18n="activity-2-title">Eğitim Atölyesi:</strong> <span data-i18n="activity-2-desc">Okullara ve kurumlara geri dönüşüm hakkında bilgilendirme ve pratik atölyeler düzenliyoruz.</span></li>
+        <li><strong data-i18n="activity-3-title">Geri Dönüşüm Sürüşü:</strong> <span data-i18n="activity-3-desc">İlçelerde geri dönüşüm bilinçlendirme ve toplama noktaları hakkında bilgi veren mobil etkinlikler.</span></li>
+        <li><strong data-i18n="activity-4-title">Sosyal Medya Kampanyaları:</strong> <span data-i18n="activity-4-desc">#GeriDönüşBirHayata etiketi ile farkındalık yaratıyoruz.</span></li>
     </ul>
 </div>
 
@@ -615,17 +615,16 @@ window.onclick = function(event) {
 
 <div class="container" id="ekip">
     <h2 data-i18n="team">Proje Ekibi</h2>
-    <p>Bu site, Geri Dönüşüm Bilgilendirme Sistemi grup projesi kapsamında hazırlanmıştır.</p>
+    <p data-i18n="team-desc">Bu site, Geri Dönüşüm Bilgilendirme Sistemi grup projesi kapsamında hazırlanmıştır.</p>
     <ul>
-        <li>Nuri Özcan  â€“ 240307041</li>
-        <li>Bartuğ Ender  â€“ 240307046</li>
+        <li>Nuri Özcan – 240307041</li>
+        <li>Bartuğ Ender – 240307046</li>
     </ul>
 </div>
 
 <footer>
-    <p>Â© 2025 Geri Dönüşüm Bilgilendirme Sistemi â€“ Tüm hakları saklıdır.</p>
-    <p>Doğa için geri dönüştürüyoruz. Çevreyi korumak hepimizin sorumluluğu.</p>
-</footer>
+    <p data-i18n="footer-copyright">© 2025 Geri Dönüşüm Bilgilendirme Sistemi – Tüm hakları saklıdır.</p>
+    <p data-i18n="footer-message">Doğa için geri dönüştürüyoruz. Çevreyi korumak hepimizin sorumluluğu.</p>
 </footer>
 
 <script>
@@ -818,10 +817,18 @@ const translations = {
         "nav-contact": "İletişim",
         "nav-team": "Proje Ekibi",
         "why-heading": "Neden Geri Dönüşüm Önemlidir?",
+        "why-item1": "Doğal kaynakların daha verimli kullanılmasını sağlar.",
+        "why-item2": "Enerji tasarrufu sağlar.",
+        "why-item3": "Çöp miktarını ve çevre kirliliğini azaltır.",
+        "why-item4": "Gelecek nesiller için daha temiz bir dünya bırakmamıza yardım eder.",
         "hero-title": "Geri Dönüşümle Geleceğe Adım At",
         "hero-subtitle": "Doğa için küçük bir adım atın — bugün geri dönüştürmeye başlayın.",
+        "detailed-info": "Detaylı Bilgi",
         "bin-colors": "Geri Dönüşüm Kutularının Renkleri",
         "activities": "Faaliyetler",
+        "team-desc": "Bu site, Geri Dönüşüm Bilgilendirme Sistemi grup projesi kapsamında hazırlanmıştır.",
+        "footer-copyright": "© 2025 Geri Dönüşüm Bilgilendirme Sistemi – Tüm hakları saklıdır.",
+        "footer-message": "Doğa için geri dönüştürüyoruz. Çevreyi korumak hepimizin sorumluluğu.",
         "contact": "İletişim",
         "team": "Proje Ekibi",
         "login": "Giriş Yap",
@@ -834,7 +841,40 @@ const translations = {
         "password-repeat": "Şifre Tekrar",
         "full-name": "Ad Soyad",
         "no-account": "Hesabınız yok mu?",
-        "have-account": "Zaten hesabınız var mı?"
+        "have-account": "Zaten hesabınız var mı?",
+        "blue-box": "MAVİ<br>Kağıt / Karton",
+        "yellow-box": "SARI<br>Plastik",
+        "green-box": "YEŞİL<br>Cam",
+        "grey-box": "GRİ<br>Metal",
+        "brown-box": "KAHVERENGİ<br>Organik",
+        "black-box": "SİYAH<br>Geri Dönüşemeyen",
+        "red-box": "KIRMIZI<br>Tibbi",
+        "clear-box": "SEFFAF<br>Tehlikeli / Elektronik",
+        "blue-heading": "Mavi Kutuda Neler Atılır?",
+        "blue-desc": "Kağıt materyaller geri dönüştürüldüğünde ağaç ihtiyacı azalır, enerji tasarrufu sağlanır ve atık miktarı küçülür. Kirli veya yağlı kağıtlar (ör. yağlı pizza kutuları) geri dönüşüm sürecini bozabileceği için genellikle ayrılmalıdır.",
+        "yellow-heading": "Sarı Kutuda Neler Atılır?",
+        "yellow-desc": "Plastikler uygun şekilde ayrıldığında tekrar işlenebilir; doğada çok uzun süre kalırlar ve doğru geri dönüşüm çevre kirliliğini azaltır. Kirli plastikler geri dönüşüm işlemini zorlaştırır.",
+        "green-heading": "Yeşil Kutuda Neler Atılır?",
+        "green-desc": "Cam sınırsız sayıda geri dönüştürülebilir; cam atıkların ayrılması enerji tasarrufu sağlar ve ham madde kullanımını azaltır. Cam kırıkları dikkatlice paketlenmelidir.",
+        "grey-heading": "Gri Kutuda Neler Atılır?",
+        "grey-desc": "Metaller geri dönüştürüldüğünde yeni ürün üretmek için daha az enerji harcanır. Metal atıklar sıkıştırılabilir ve geri dönüşüm verimliliğini artırır.",
+        "brown-heading": "Kahverengi Kutuda Neler Atılır?",
+        "brown-desc": "Organik atıklar; yemek artıkları, bahçe atıkları ve kompostlanabilir maddeler buraya atılır. Ayrıştırma toprağa geri dönüşüm sağlar.",
+        "black-heading": "Siyah Kutuda Neler Atılır?",
+        "black-desc": "Geri dönüşümü mümkün olmayan evsel atıklar (kirli paketlemeler, küçük kırık eşyalar) siyah kutuda toplanır ve bertaraf edilir.",
+        "red-heading": "Tibbi Atiklar (Kirmizi)",
+        "red-desc": "Tibbi atiklar kirmizi kutu veya posetlerde toplanmalidir; sivri nesneler delinmeye dayanikli kutularda ayrica isaretlenmelidir.",
+        "clear-heading": "Şeffaf Kutuda Neler Atılır?",
+        "clear-desc": "Tehlikeli atıklar ve elektronik atıklar (piller, küçük elektronik cihazlar) şeffaf ambalaj veya ayrı toplama noktalarında toplanır. Güvenli teslim önemlidir.",
+        "why-should-throw": "Neden Bunları Atmalıyız?",
+        "activity-1-title": "Çevre Temizliği Etkinlikleri:",
+        "activity-1-desc": "Ayda bir kez organize edilen parklar ve plajlar temizlik kampanyaları.",
+        "activity-2-title": "Eğitim Atölyesi:",
+        "activity-2-desc": "Okullara ve kurumlara geri dönüşüm hakkında bilgilendirme ve pratik atölyeler düzenliyoruz.",
+        "activity-3-title": "Geri Dönüşüm Sürüşü:",
+        "activity-3-desc": "İlçelerde geri dönüşüm bilinçlendirme ve toplama noktaları hakkında bilgi veren mobil etkinlikler.",
+        "activity-4-title": "Sosyal Medya Kampanyaları:",
+        "activity-4-desc": "#GeriDönüşBirHayata etiketi ile farkındalık yaratıyoruz."
     },
     en: {
         "site-title": "Recycling Information System",
@@ -843,10 +883,18 @@ const translations = {
         "nav-contact": "Contact",
         "nav-team": "Project Team",
         "why-heading": "Why is Recycling Important?",
+        "why-item1": "Enables more efficient use of natural resources.",
+        "why-item2": "Provides energy savings.",
+        "why-item3": "Reduces waste amount and environmental pollution.",
+        "why-item4": "Helps us leave a cleaner world for future generations.",
         "hero-title": "Step into the Future with Recycling",
         "hero-subtitle": "Take a small step for nature — start recycling today.",
+        "detailed-info": "Detailed Information",
         "bin-colors": "Colors of Recycling Bins",
         "activities": "Activities",
+        "team-desc": "This site was prepared as part of the Recycling Information System group project.",
+        "footer-copyright": "© 2025 Recycling Information System – All rights reserved.",
+        "footer-message": "We recycle for nature. Protecting the environment is everyone's responsibility.",
         "contact": "Contact",
         "team": "Project Team",
         "login": "Login",
@@ -859,7 +907,40 @@ const translations = {
         "password-repeat": "Confirm Password",
         "full-name": "Full Name",
         "no-account": "Don't have an account?",
-        "have-account": "Already have an account?"
+        "have-account": "Already have an account?",
+        "blue-box": "BLUE<br>Paper / Cardboard",
+        "yellow-box": "YELLOW<br>Plastic",
+        "green-box": "GREEN<br>Glass",
+        "grey-box": "GREY<br>Metal",
+        "brown-box": "BROWN<br>Organic",
+        "black-box": "BLACK<br>Non-Recyclable",
+        "red-box": "RED<br>Medical",
+        "clear-box": "CLEAR<br>Hazardous / Electronic",
+        "blue-heading": "What Goes in the Blue Bin?",
+        "blue-desc": "When paper materials are recycled, the need for trees decreases, energy is saved, and waste is reduced. Dirty or greasy papers (e.g., greasy pizza boxes) should generally be separated as they can disrupt the recycling process.",
+        "yellow-heading": "What Goes in the Yellow Bin?",
+        "yellow-desc": "When properly separated, plastics can be reprocessed; they remain in nature for a very long time, and proper recycling reduces environmental pollution. Dirty plastics make the recycling process difficult.",
+        "green-heading": "What Goes in the Green Bin?",
+        "green-desc": "Glass can be recycled indefinitely; separating glass waste saves energy and reduces raw material usage. Glass fragments should be carefully packaged.",
+        "grey-heading": "What Goes in the Grey Bin?",
+        "grey-desc": "When metals are recycled, less energy is spent to produce new products. Metal waste can be compressed and increases recycling efficiency.",
+        "brown-heading": "What Goes in the Brown Bin?",
+        "brown-desc": "Organic waste; food scraps, garden waste, and compostable materials are disposed of here. Decomposition provides recycling back to the soil.",
+        "black-heading": "What Goes in the Black Bin?",
+        "black-desc": "Non-recyclable household waste (dirty packaging, small broken items) is collected in the black bin and disposed of.",
+        "red-heading": "Medical Waste (Red)",
+        "red-desc": "Medical waste should be collected in red bins or bags; sharp objects should be additionally marked in puncture-resistant containers.",
+        "clear-heading": "What Goes in the Clear Bin?",
+        "clear-desc": "Hazardous waste and electronic waste (batteries, small electronic devices) are collected in clear packaging or at separate collection points. Safe delivery is important.",
+        "why-should-throw": "Why Should We Dispose of These?",
+        "activity-1-title": "Environmental Cleaning Events:",
+        "activity-1-desc": "Parks and beaches cleanup campaigns organized once a month.",
+        "activity-2-title": "Educational Workshop:",
+        "activity-2-desc": "We organize informational and practical workshops about recycling for schools and institutions.",
+        "activity-3-title": "Recycling Drive:",
+        "activity-3-desc": "Mobile events providing information about recycling awareness and collection points in districts.",
+        "activity-4-title": "Social Media Campaigns:",
+        "activity-4-desc": "We create awareness with the hashtag #RecycleForLife."
     }
 };
 
@@ -880,6 +961,13 @@ function switchLanguage(lang) {
         } else {
             element.textContent = translation;
         }
+    });
+
+    document.querySelectorAll('[data-i18n-html]').forEach(element => {
+        const key = element.getAttribute('data-i18n-html');
+        const translation = translations[lang] && translations[lang][key];
+        if (!translation) return;
+        element.innerHTML = translation;
     });
 
     document.documentElement.lang = lang;
