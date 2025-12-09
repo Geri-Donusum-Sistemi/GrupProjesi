@@ -307,6 +307,7 @@
         <h2 data-i18n="signup-heading">Kayıt Ol</h2>
         <form>
             <input type="text" placeholder="Ad Soyad" data-i18n="full-name" required>
+            <input type="text" placeholder="Kullanıcı Adı" data-i18n="nickname" name="nickname" required>
             <input type="email" placeholder="E-posta Adresi" data-i18n="email" required>
             <input type="password" placeholder="Şifre" data-i18n="password" required>
             <input type="password" placeholder="Şifre Tekrar" data-i18n="password-repeat" required>
@@ -348,23 +349,40 @@ function switchToSignup() {
     openSignupModal();
 }
 
+function getProfiles() {
+    try {
+        return JSON.parse(localStorage.getItem('userProfiles')) || {};
+    } catch (e) {
+        return {};
+    }
+}
+
+function saveProfiles(profiles) {
+    localStorage.setItem('userProfiles', JSON.stringify(profiles));
+}
+
+function setLoggedIn(email, nickname) {
+    const displayName = (nickname && nickname.trim()) || (email ? email.split('@')[0] : '');
+    if (displayName) {
+        localStorage.setItem('loggedInUser', displayName);
+    }
+    if (email) {
+        localStorage.setItem('loggedInEmail', email);
+    }
+}
+
 function login(email) {
-    // E-postadan kullanıcı adı çıkar (@ öncesi)
-    const username = email.split('@')[0];
-    
-    // localStorage'a kaydet
-    localStorage.setItem('loggedInUser', username);
-    
-    // UI güncelle
+    const profiles = getProfiles();
+    const nickname = profiles[email]?.nickname;
+    setLoggedIn(email, nickname);
     updateAuthUI();
-    
-    // Modal kapat
     closeLoginModal();
 }
 
 function logout() {
     // localStorage'dan sil
     localStorage.removeItem('loggedInUser');
+    localStorage.removeItem('loggedInEmail');
     
     // UI güncelle
     updateAuthUI();
@@ -401,10 +419,28 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const signupForm = document.querySelector('#signupModal form');
     if (signupForm) {
-        signupForm.addEventListener('submit', function(e) {
+        signupForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const email = this.querySelector('input[type="email"]').value;
-            login(email);
+            const nickname = this.querySelector('input[name="nickname"]').value;
+            const password = this.querySelector('input[type="password"]').value;
+
+            try {
+                await fetch('/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, nickname })
+                });
+            } catch (err) {
+                console.error('Signup kaydı gönderilemedi', err);
+            }
+
+            const profiles = getProfiles();
+            profiles[email] = { nickname };
+            saveProfiles(profiles);
+            setLoggedIn(email, nickname);
+            updateAuthUI();
+            closeSignupModal();
             this.reset();
         });
     }
@@ -865,6 +901,7 @@ const translations = {
         "password": "Şifre",
         "password-repeat": "Şifre Tekrar",
         "full-name": "Ad Soyad",
+        "nickname": "Kullanıcı Adı",
         "no-account": "Hesabınız yok mu?",
         "have-account": "Zaten hesabınız var mı?",
         "blue-box": "MAVİ<br>Kağıt / Karton",
@@ -931,6 +968,7 @@ const translations = {
         "password": "Password",
         "password-repeat": "Confirm Password",
         "full-name": "Full Name",
+        "nickname": "Nickname",
         "no-account": "Don't have an account?",
         "have-account": "Already have an account?",
         "blue-box": "BLUE<br>Paper / Cardboard",

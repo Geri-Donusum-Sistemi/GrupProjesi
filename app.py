@@ -21,6 +21,17 @@ class Atik(db.Model):
     def __repr__(self):
         return f"<Atik {self.tur}>"
 
+
+# --- TABLO: User ---
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+    nickname = db.Column(db.String(80), nullable=False)
+
+    def __repr__(self):
+        return f"<User {self.email}>"
+
 # 🔥 Flask 3.0 için doğru olan tablo oluşturma yöntemi
 with app.app_context():
     db.create_all()
@@ -40,7 +51,8 @@ def bilgi():
 @app.route("/admin")
 def admin():
     atiklar = Atik.query.all()
-    return render_template("admin.html", atiklar=atiklar)
+    users = User.query.all()
+    return render_template("admin.html", atiklar=atiklar, users=users)
 
 # --- EKLE ---
 @app.route("/ekle", methods=["POST"])
@@ -77,6 +89,30 @@ def guncelle(atik_id):
     atik.kutu_rengi = request.form["kutu_rengi"]
     db.session.commit()
     return redirect(url_for("admin"))
+
+
+# --- SIGNUP (from frontend) ---
+@app.route("/signup", methods=["POST"])
+def signup():
+    data = request.get_json() or request.form
+    email = (data.get("email") or "").strip().lower()
+    password = (data.get("password") or "").strip()
+    nickname = (data.get("nickname") or "").strip()
+
+    if not email or not password or not nickname:
+        return {"status": "error", "message": "Eksik bilgi"}, 400
+
+    existing = User.query.filter_by(email=email).first()
+    if existing:
+        existing.password = password
+        existing.nickname = nickname
+        db.session.commit()
+    else:
+        user = User(email=email, password=password, nickname=nickname)
+        db.session.add(user)
+        db.session.commit()
+
+    return {"status": "ok"}
 
 if __name__ == "__main__":
     app.run(debug=True)
