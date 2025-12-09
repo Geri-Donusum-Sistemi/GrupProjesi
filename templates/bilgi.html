@@ -479,6 +479,11 @@
             background-color: #4ade80 !important;
             color: #000 !important;
         }
+        /* Renk butonları koyu modda yazı rengi */
+        :root.dark button span {
+            color: inherit !important;
+        }
+        
         /* Theme switch toggle */
         .theme-switch {
             display: inline-flex;
@@ -970,6 +975,19 @@
             document.body.style.color = '#333333';
         }
     }
+    
+    // Renk kutularına tıklandığında tabloya scroll et
+    function scrollToColor(colorId) {
+        const element = document.getElementById(colorId);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Satırı vurgula
+            element.style.backgroundColor = 'rgba(255, 255, 0, 0.3)';
+            setTimeout(() => {
+                element.style.backgroundColor = '';
+            }, 2000);
+        }
+    }
 
     // Tema toggle: localStorage ile sakla
     const themeToggle = document.getElementById('themeToggle');
@@ -1132,38 +1150,61 @@
         </ul>
 
         <h2 data-lang-tr="Geri Dönüşüm Kutuların Renk Kodları">Geri Dönüşüm Kutuların Renk Kodları</h2>
+        
+        <!-- Renk Filtreleme Butonları -->
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; justify-content: center;">
+            <button onclick="scrollToColor('mavi')" style="background: #1976d2; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <span data-lang-tr="Mavi Kutu" style="color: inherit;">🔵 Mavi (Kağıt)</span>
+            </button>
+            <button onclick="scrollToColor('sari')" style="background: #fbc02d; color: black; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <span data-lang-tr="Sarı Kutu" style="color: inherit;">🟡 Sarı (Plastik)</span>
+            </button>
+            <button onclick="scrollToColor('yesil')" style="background: #388e3c; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <span data-lang-tr="Yeşil Kutu" style="color: inherit;">🟢 Yeşil (Cam)</span>
+            </button>
+            <button onclick="scrollToColor('gri')" style="background: #757575; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <span data-lang-tr="Gri Kutu" style="color: inherit;">⚫ Gri (Evsel)</span>
+            </button>
+            <button onclick="scrollToColor('kirmizi')" style="background: #d32f2f; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <span data-lang-tr="Kırmızı Kutu" style="color: inherit;">🔴 Kırmızı (Tehlikeli)</span>
+            </button>
+            <button onclick="scrollToColor('turuncu')" style="background: #ff6f00; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <span data-lang-tr="Turuncu Kutu" style="color: inherit;">🟠 Turuncu (Metal)</span>
+            </button>
+        </div>
+        
         <table>
             <tr>
                 <th data-lang-tr="Renk">Renk</th>
                 <th data-lang-tr="Atık Türü">Atık Türü</th>
                 <th data-lang-tr="Örnekler">Örnekler</th>
             </tr>
-            <tr>
+            <tr id="mavi" style="transition: background-color 0.3s;">
                 <td style="background: #1976d2; color: white;"><strong>Mavi</strong></td>
                 <td>Kağıt ve Karton</td>
                 <td>Gazete, dergi, kutu</td>
             </tr>
-            <tr>
+            <tr id="sari" style="transition: background-color 0.3s;">
                 <td style="background: #fbc02d;"><strong>Sarı</strong></td>
                 <td>Plastik</td>
                 <td>Şişe, kutu, ambalaj</td>
             </tr>
-            <tr>
+            <tr id="yesil" style="transition: background-color 0.3s;">
                 <td style="background: #388e3c; color: white;"><strong>Yeşil</strong></td>
                 <td>Cam</td>
                 <td>Şişe, kavanoz</td>
             </tr>
-            <tr>
+            <tr id="gri" style="transition: background-color 0.3s;">
                 <td style="background: #757575; color: white;"><strong>Gri</strong></td>
                 <td>Evsel Atıklar</td>
                 <td>Organik, yiyecek</td>
             </tr>
-            <tr>
+            <tr id="kirmizi" style="transition: background-color 0.3s;">
                 <td style="background: #d32f2f; color: white;"><strong>Kırmızı</strong></td>
                 <td>Tehlikeli Atıklar</td>
                 <td>Piller, ilaç</td>
             </tr>
-            <tr>
+            <tr id="turuncu" style="transition: background-color 0.3s;">
                 <td style="background: #ff6f00; color: white;"><strong>Turuncu</strong></td>
                 <td>Metal</td>
                 <td>Konserve, kapak</td>
