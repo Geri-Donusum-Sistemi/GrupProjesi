@@ -1,8 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 import os
+from datetime import timedelta
 
 app = Flask(__name__)
+app.secret_key = "geri-donus-sistemi-2025"
+app.permanent_session_lifetime = timedelta(minutes=1)
 
 # --- Veritabanı ayarı (sqlite dosyası) ---
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -48,11 +51,29 @@ def bilgi():
     return render_template("bilgi.html")
 
 # --- ADMIN SAYFASI ---
-@app.route("/admin")
+@app.route("/admin", methods=["GET", "POST"])
 def admin():
+    if request.method == "POST":
+        password = request.form.get("password", "")
+        if password == "Gazoz":
+            session.permanent = True
+            session["admin_logged_in"] = True
+            return redirect(url_for("admin"))
+        else:
+            return render_template("admin.html", show_password_form=True, error="Şifre yanlış")
+    
+    if not session.get("admin_logged_in"):
+        return render_template("admin.html", show_password_form=True)
+    
     atiklar = Atik.query.all()
     users = User.query.all()
-    return render_template("admin.html", atiklar=atiklar, users=users)
+    return render_template("admin.html", show_password_form=False, atiklar=atiklar, users=users)
+
+# --- LOGOUT ---
+@app.route("/logout")
+def logout():
+    session.pop("admin_logged_in", None)
+    return redirect(url_for("admin"))
 
 # --- EKLE ---
 @app.route("/ekle", methods=["POST"])
