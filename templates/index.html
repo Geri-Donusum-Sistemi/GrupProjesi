@@ -43,14 +43,22 @@
             background: #2e7d32;
             color: white;
             padding: 20px;
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
-            position: relative;
+            column-gap: 10px;
         }
         header > div:first-child {
             text-align: center;
-            flex: 1;
+            grid-column: 2;
+            margin: 0 auto;
+        }
+        .auth-area {
+            grid-column: 3;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-self: end;
         }
         header h1 {
             margin: 0 0 5px 0;
@@ -661,17 +669,22 @@ window.onclick = function(event) {
     </ul>
 </div>
 
-<div class="container" id="iletisim">
-    <h2 data-i18n="contact">İletişim</h2>
-    <p><strong>E-posta:</strong> <a href="mailto:info@geridosumsistemi.org">info@geridosumsistemi.org</a></p>
-    <p><strong>Telefon:</strong> <a href="tel:05373148806">0537 314 8806</a></p>
-    <p><strong>Adres:</strong> Ankara, Sincan, Türkiye</p>
-    <p><strong>Sosyal Medya:</strong></p>
-    <ul>
-        <li><a href="#">Facebook</a></li>
-        <li><a href="#">Twitter / X</a></li>
-        <li><a href="#">Instagram</a></li>
-    </ul>
+<div class="container" id="iletisim" style="display: flex; gap: 30px; align-items: flex-start;">
+    <div style="flex: 1;">
+        <h2 data-i18n="contact">İletişim</h2>
+        <p><strong>E-posta:</strong> <a href="mailto:info@geridosumsistemi.org">info@geridosumsistemi.org</a></p>
+        <p><strong>Telefon:</strong> <a href="tel:05373148806">0537 314 8806</a></p>
+        <p><strong>Adres:</strong> Ankara, Türkiye</p>
+        <p><strong>Sosyal Medya:</strong></p>
+        <ul>
+            <li><a href="#">Facebook</a></li>
+            <li><a href="https://www.instagram.com/_enderbartug/" target="_blank">Instagram (_enderbartug)</a></li>
+            <li><a href="https://www.instagram.com/nuri_ozcaan/" target="_blank">Instagram (nuri_ozcaan)</a></li>
+        </ul>
+    </div>
+    <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
+        <img src="/static/images/image.png" alt="Geri Dönüşüm" style="max-width: 100%; height: auto; max-height: 400px; object-fit: contain;">
+    </div>
 </div>
 
 <div class="container" id="ekip">
