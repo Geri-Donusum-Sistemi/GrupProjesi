@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geri Dönüşüm Oyunu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 50%, #66bb6a 100%);
+            min-height: 100vh;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 750px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            overflow: hidden;
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .header {
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
+            color: white;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        .header h1 {
+            font-size: 1.5em;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .score {
+            font-size: 1.5em;
+            font-weight: bold;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 20px;
+            animation: scoreGlow 2s infinite;
+        }
+        @keyframes scoreGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(255,255,255,0.3); }
+            50% { box-shadow: 0 0 20px rgba(255,255,255,0.6); }
+        }
+        .game-content {
+            padding: 25px;
+        }
+        .login-screen {
+            text-align: center;
+        }
+        .login-screen h2 {
+            color: #1b5e20;
+            margin-bottom: 20px;
+        }
+        .login-screen p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .login-screen button {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .login-screen button:hover {
+            background: #1b5e20;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
+        }
+        .game-area {
+            position: relative;
+            min-height: 200px;
+            background: linear-gradient(180deg, #e8f5e9 0%, #ffffff 100%);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .instruction {
+            text-align: center;
+            font-size: 1.1em;
+            color: #1b5e20;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            animation: bounce 1s ease-in-out infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .falling-item {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border: 3px solid #2e7d32;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-10px) rotate(5deg); }
+            75% { transform: translateY(-10px) rotate(-5deg); }
+        }
+        .falling-item:hover {
+            transform: scale(1.2) rotate(10deg);
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.5);
+            border-color: #ffc107;
+        }
+        .falling-item.selected {
+            border-color: #ff9800;
+            border-width: 5px;
+            box-shadow: 0 0 20px rgba(255, 152, 0, 0.8);
+            animation: selected-pulse 0.5s ease-in-out;
+        }
+        @keyframes selected-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+        .bins {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(145deg, #e8f5e9, #f1f8e9);
+            border-radius: 15px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .bin {
+            width: 100%;
+            height: 140px;
+            border: 4px solid #333;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .bin:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+        .bin.active {
+            border-width: 6px;
+            border-color: #ff9800 !important;
+            box-shadow: 0 0 25px rgba(255, 152, 0, 0.8);
+            animation: bin-pulse 0.5s ease-in-out;
+        }
+        @keyframes bin-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .bin.blue { 
+            background: linear-gradient(145deg, #2196f3, #1976d2); 
+            color: white; 
+        }
+        .bin.yellow { 
+            background: linear-gradient(145deg, #ffc107, #ffa000); 
+            color: #000; 
+        }
+        .bin.green { 
+            background: linear-gradient(145deg, #4caf50, #388e3c); 
+            color: white; 
+        }
+        .bin.red { 
+            background: linear-gradient(145deg, #f44336, #d32f2f); 
+            color: white; 
+        }
+        .bin-icon {
+            font-size: 2.5em;
+            margin-bottom: 8px;
+            animation: binIcon 2s infinite;
+        }
+        @keyframes binIcon {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+        .timer {
+            text-align: center;
+            font-size: 1.8em;
+            color: #d32f2f;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background: linear-gradient(145deg, #ffebee, #ffffff);
+            padding: 12px 25px;
+            border-radius: 30px;
+            box-shadow: 0 3px 10px rgba(211, 47, 47, 0.3);
+            animation: timer-pulse 1s infinite;
+        }
+        @keyframes timer-pulse {
+            0%, 100% { box-shadow: 0 3px 10px rgba(211, 47, 47, 0.3); }
+            50% { box-shadow: 0 5px 20px rgba(211, 47, 47, 0.6); }
+        }
+        .game-over {
+            text-align: center;
+        }
+        .game-over h2 {
+            color: #1b5e20;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .final-score {
+            font-size: 3.5em;
+            color: #2e7d32;
+            font-weight: bold;
+            margin: 25px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            animation: final-score-appear 0.5s ease-out;
+        }
+        @keyframes final-score-appear {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .game-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .game-btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .play-again-btn {
+            background: #2e7d32;
+            color: white;
+        }
+        .play-again-btn:hover {
+            background: #1b5e20;
+        }
+        .back-btn {
+            background: #757575;
+            color: white;
+        }
+        .back-btn:hover {
+            background: #616161;
+        }
+        .hidden {
+            display: none;
+        }
+        .feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5em;
+            font-weight: bold;
+            padding: 25px 50px;
+            border-radius: 15px;
+            animation: fadeOut 1s forwards;
+            z-index: 1000;
+            pointer-events: none;
+        }
+        .feedback.correct {
+            background: #4caf50;
+            color: white;
+        }
+        .feedback.wrong {
+            background: #f44336;
+            color: white;
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+        }
+        @keyframes correct-bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); background: #4caf50; }
+        }
+        @keyframes wrong-shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+            50% { background: #f44336; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Geri Dönüşüm Oyunu</h1>
+            <div class="score">Puan: <span id="scoreDisplay">0</span></div>
+        </div>
+        <div class="game-content">
+            <div id="loginScreen" class="login-screen">
+                <h2>🔒 Oyuna Katılın</h2>
+                <p>Oyunu oynamak için lütfen giriş yapın veya kayıt olun.</p>
+                <button onclick="goToHomePage()">Ana Sayfaya Git</button>
+            </div>
+            <div id="gameScreen" class="hidden">
+                <div class="timer">⏰ Süre: <span id="timeDisplay">30</span></div>
+                <div class="instruction">Atıkları seçip doğru kutuya basın!</div>
+                <div class="game-area" id="gameArea"></div>
+                <div class="bins">
+                    <div class="bin blue" data-type="kagit" onclick="selectBin('kagit')">
+                        <div class="bin-icon">📄</div>
+                        <div>Kağıt</div>
+                    </div>
+                    <div class="bin yellow" data-type="plastik" onclick="selectBin('plastik')">
+                        <div class="bin-icon">♻️</div>
+                        <div>Plastik</div>
+                    </div>
+                    <div class="bin green" data-type="cam" onclick="selectBin('cam')">
+                        <div class="bin-icon">🥛</div>
+                        <div>Cam</div>
+                    </div>
+                    <div class="bin red" data-type="pil" onclick="selectBin('pil')">
+                        <div class="bin-icon">🔋</div>
+                        <div>Pil</div>
+                    </div>
+                </div>
+            </div>
+            <div id="gameOverScreen" class="game-over hidden">
+                <h2>🎉 Oyun Bitti!</h2>
+                <div class="final-score" id="finalScore">0</div>
+                <p style="font-size: 1.3em; color: #666;">Tebrikler! Çevre için harika bir iş çıkardınız!</p>
+                <div class="game-buttons">
+                    <button class="game-btn play-again-btn" onclick="restartGame()">🔄 Tekrar Oyna</button>
+                    <button class="game-btn back-btn" onclick="goBackToQuiz()">← Quiz'e Dön</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let score = 0;
+        let timeLeft = 30;
+        let gameInterval;
+        let timerInterval;
+        let currentItem = null;
+        let selectedBin = null;
+        let userEmail = '';
+        const items = [
+            { emoji: '📰', type: 'kagit', name: 'Gazete' },
+            { emoji: '📦', type: 'kagit', name: 'Karton' },
+            { emoji: '📄', type: 'kagit', name: 'Kağıt' },
+            { emoji: '📚', type: 'kagit', name: 'Kitap' },
+            { emoji: '🧃', type: 'plastik', name: 'Plastik Kutu' },
+            { emoji: '🥤', type: 'plastik', name: 'Plastik Bardak' },
+            { emoji: '🛍️', type: 'plastik', name: 'Poşet' },
+            { emoji: '💿', type: 'plastik', name: 'CD' },
+            { emoji: '🍷', type: 'cam', name: 'Cam Şişe' },
+            { emoji: '🫙', type: 'cam', name: 'Cam Kavanoz' },
+            { emoji: '🥛', type: 'cam', name: 'Cam Sürahı' },
+            { emoji: '🍾', type: 'cam', name: 'Şampanya' },
+            { emoji: '🔋', type: 'pil', name: 'Pil' },
+            { emoji: '🔌', type: 'pil', name: 'Elektronik' },
+            { emoji: '💻', type: 'pil', name: 'Laptop' },
+            { emoji: '📱', type: 'pil', name: 'Telefon' }
+        ];
+        window.addEventListener('DOMContentLoaded', async () => {
+            const loggedInEmail = localStorage.getItem('loggedInEmail');
+            if (!loggedInEmail) { showLoginScreen(); return; }
+            try {
+                const response = await fetch('/check_user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: loggedInEmail })
+                });
+                const data = await response.json();
+                if (!data.exists) { showLoginScreen(); return; }
+                userEmail = loggedInEmail;
+                startGame();
+            } catch (error) {
+                console.error('Hata:', error);
+                showLoginScreen();
+            }
+        });
+        function showLoginScreen() {
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.add('hidden');
+        }
+        function goToHomePage() { window.location.href = '/'; }
+        function goBackToQuiz() { window.location.href = '/quiz'; }
+        function startGame() {
+            score = 0;
+            timeLeft = 30;
+            updateScore();
+            updateTimer();
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            spawnItem();
+            gameInterval = setInterval(spawnItem, 3000);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimer();
+                if (timeLeft <= 0) endGame();
+            }, 1000);
+        }
+        function spawnItem() {
+            if (currentItem) return;
+            const item = items[Math.floor(Math.random() * items.length)];
+            const gameArea = document.getElementById('gameArea');
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'falling-item';
+            itemDiv.innerHTML = item.emoji;
+            itemDiv.dataset.type = item.type;
+            itemDiv.style.left = Math.random() * (gameArea.offsetWidth - 80) + 'px';
+            itemDiv.style.top = '10px';
+            itemDiv.onclick = () => selectItem(itemDiv);
+            gameArea.appendChild(itemDiv);
+            currentItem = itemDiv;
+        }
+        function selectItem(item) {
+            if (currentItem) currentItem.classList.remove('selected');
+            item.classList.add('selected');
+            currentItem = item;
+            if (selectedBin) checkAnswer(item, selectedBin);
+        }
+        function selectBin(binType) {
+            selectedBin = binType;
+            document.querySelectorAll('.bin').forEach(bin => {
+                bin.classList.toggle('active', bin.dataset.type === binType);
+            });
+            if (currentItem) checkAnswer(currentItem, binType);
+        }
+        function checkAnswer(item, binType) {
+            const isCorrect = item.dataset.type === binType;
+            if (isCorrect) {
+                score += 10;
+                showFeedback('✓ Doğru! +10', 'correct');
+                item.style.animation = 'correct-bounce 0.5s ease-out';
+            } else {
+                score = Math.max(0, score - 5);
+                showFeedback('✗ Yanlış! -5', 'wrong');
+                item.style.animation = 'wrong-shake 0.5s ease-out';
+            }
+            updateScore();
+            setTimeout(() => {
+                item.remove();
+                currentItem = null;
+                selectedBin = null;
+                document.querySelectorAll('.bin').forEach(bin => bin.classList.remove('active'));
+            }, 500);
+        }
+        function showFeedback(text, type) {
+            const feedback = document.createElement('div');
+            feedback.className = `feedback ${type}`;
+            feedback.textContent = text;
+            document.body.appendChild(feedback);
+            setTimeout(() => feedback.remove(), 1000);
+        }
+        function updateScore() {
+            document.getElementById('scoreDisplay').textContent = score;
+        }
+        function updateTimer() {
+            document.getElementById('timeDisplay').textContent = timeLeft;
+        }
+        async function endGame() {
+            clearInterval(gameInterval);
+            clearInterval(timerInterval);
+            if (currentItem) { currentItem.remove(); currentItem = null; }
+            try {
+                await fetch('/submit_game', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail, score: score })
+                });
+            } catch (error) {
+                console.error('Kayıt hatası:', error);
+            }
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.remove('hidden');
+            document.getElementById('finalScore').textContent = score;
+        }
+        function restartGame() {
+            document.querySelectorAll('.falling-item').forEach(item => item.remove());
+            startGame();
+        }
+    </script>
+</body>
+</html>

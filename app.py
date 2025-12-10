@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 import os
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 app = Flask(__name__)
 app.secret_key = "geri-donus-sistemi-2025"
@@ -35,6 +36,53 @@ class User(db.Model):
     def __repr__(self):
         return f"<User {self.email}>"
 
+# --- TABLO: Quiz ---
+class Quiz(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    question = db.Column(db.Text, nullable=False)
+    option_a = db.Column(db.String(200), nullable=False)
+    option_b = db.Column(db.String(200), nullable=False)
+    option_c = db.Column(db.String(200), nullable=False)
+    option_d = db.Column(db.String(200), nullable=False)
+    correct_answer = db.Column(db.String(1), nullable=False)  # A, B, C, or D
+
+    def __repr__(self):
+        return f"<Quiz {self.id}>"
+
+# --- TABLO: QuizResult ---
+class QuizResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_email = db.Column(db.String(120), nullable=False)
+    score = db.Column(db.Integer, nullable=False)
+    total = db.Column(db.Integer, nullable=False)
+    timestamp = db.Column(db.String(50), nullable=False)
+
+    def __repr__(self):
+        return f"<QuizResult {self.user_email}: {self.score}/{self.total}>"
+
+# --- TABLO: GameResult ---
+class GameResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_email = db.Column(db.String(120), nullable=False)
+    score = db.Column(db.Integer, nullable=False)
+    timestamp = db.Column(db.String(50), nullable=False)
+
+    def __repr__(self):
+        return f"<GameResult {self.user_email}: {self.score}>"
+
+
+# --- TABLO: Feedback ---
+class Feedback(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    topic = db.Column(db.String(200), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.String(50), nullable=False)
+
+    def __repr__(self):
+        return f"<Feedback {self.email} - {self.topic}>"
+
 # 🔥 Flask 3.0 için doğru olan tablo oluşturma yöntemi
 with app.app_context():
     db.create_all()
@@ -67,13 +115,32 @@ def admin():
     
     atiklar = Atik.query.all()
     users = User.query.all()
-    return render_template("admin.html", show_password_form=False, atiklar=atiklar, users=users)
+    feedbacks = Feedback.query.order_by(Feedback.id.desc()).all()
+    
+    # Her kullanıcı için quiz ve oyun durumunu kontrol et
+    user_quiz_data = []
+    for user in users:
+        quiz_result = QuizResult.query.filter_by(user_email=user.email).first()
+        game_result = GameResult.query.filter_by(user_email=user.email).first()
+        
+        # Quiz veya oyuna girmiş mi?
+        has_participated = quiz_result is not None or game_result is not None
+        
+        user_quiz_data.append({
+            'user': user,
+            'has_taken_quiz': has_participated,
+            'quiz_score': f"{quiz_result.score}/{quiz_result.total}" if quiz_result else (f"{game_result.score} puan" if game_result else None),
+            'quiz_percentage': round((quiz_result.score / quiz_result.total) * 100) if quiz_result else None,
+            'quiz_date': quiz_result.timestamp if quiz_result else (game_result.timestamp if game_result else None)
+        })
+    
+    return render_template("admin.html", show_password_form=False, atiklar=atiklar, user_quiz_data=user_quiz_data, feedbacks=feedbacks)
 
 # --- LOGOUT ---
 @app.route("/logout")
 def logout():
     session.pop("admin_logged_in", None)
-    return redirect(url_for("admin"))
+    return redirect(url_for("index"))
 
 # --- EKLE ---
 @app.route("/ekle", methods=["POST"])
@@ -92,6 +159,17 @@ def ekle():
 def sil(atik_id):
     atik = Atik.query.get_or_404(atik_id)
     db.session.delete(atik)
+    db.session.commit()
+    return redirect(url_for("admin"))
+
+# --- KULLANICI SİL ---
+@app.route("/sil_kullanici/<int:user_id>")
+def sil_kullanici(user_id):
+    if not session.get("admin_logged_in"):
+        return redirect(url_for("admin"))
+    
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
     db.session.commit()
     return redirect(url_for("admin"))
 
@@ -133,6 +211,184 @@ def signup():
         db.session.add(user)
         db.session.commit()
 
+    return {"status": "ok"}
+
+# --- KULLANICI KONTROL (from frontend) ---
+@app.route("/check_user", methods=["POST"])
+def check_user():
+    data = request.get_json()
+    email = (data.get("email") or "").strip().lower()
+    
+    if not email:
+        return {"exists": False}
+    
+    user = User.query.filter_by(email=email).first()
+    return {"exists": user is not None}
+
+# --- QUIZ SAYFASI ---
+@app.route("/quiz")
+def quiz():
+    return render_template("quiz.html")
+
+# --- OYUN SAYFASI ---
+@app.route("/game")
+def game():
+    return render_template("game.html")
+
+# --- QUIZ SORULARINI GETİR ---
+@app.route("/get_quiz", methods=["GET"])
+def get_quiz():
+    questions = Quiz.query.all()
+    quiz_data = []
+    for q in questions:
+        quiz_data.append({
+            "id": q.id,
+            "question": q.question,
+            "options": {
+                "A": q.option_a,
+                "B": q.option_b,
+                "C": q.option_c,
+                "D": q.option_d
+            },
+            "correct": q.correct_answer
+        })
+    return {"questions": quiz_data}
+
+# --- QUIZ SONUCUNU KAYDET ---
+@app.route("/submit_quiz", methods=["POST"])
+def submit_quiz():
+    data = request.get_json()
+    email = (data.get("email") or "").strip().lower()
+    score = data.get("score", 0)
+    total = data.get("total", 0)
+    
+    from datetime import datetime
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    result = QuizResult(
+        user_email=email,
+        score=score,
+        total=total,
+        timestamp=timestamp
+    )
+    db.session.add(result)
+    db.session.commit()
+    
+    return {"status": "ok"}
+
+# --- QUIZ LEADERBOARD (Top 10) ---
+@app.route("/quiz_leaderboard", methods=["GET"])
+def quiz_leaderboard():
+    results = (
+        db.session.query(QuizResult, User)
+        .join(User, User.email == QuizResult.user_email, isouter=True)
+        .order_by(QuizResult.score.desc())
+        .limit(10)
+        .all()
+    )
+
+    leaderboard = []
+    for qr, user in results:
+        percent = round((qr.score / qr.total) * 100) if qr.total else 0
+        leaderboard.append({
+            "nickname": user.nickname if user else qr.user_email,
+            "email": qr.user_email,
+            "score": qr.score,
+            "total": qr.total,
+            "percent": percent,
+            "timestamp": qr.timestamp
+        })
+
+    return {"leaderboard": leaderboard}
+
+# --- OYUN SONUCUNU KAYDET ---
+@app.route("/submit_game", methods=["POST"])
+def submit_game():
+    data = request.get_json()
+    email = (data.get("email") or "").strip().lower()
+    score = data.get("score", 0)
+    
+    from datetime import datetime
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    result = GameResult(
+        user_email=email,
+        score=score,
+        timestamp=timestamp
+    )
+    db.session.add(result)
+    db.session.commit()
+    
+    return {"status": "ok"}
+
+# --- GAME LEADERBOARD (Top 10) ---
+@app.route("/game_leaderboard", methods=["GET"])
+def game_leaderboard():
+    # Her kullanıcı için en yüksek skoru çek, skora göre sırala
+    sub = (
+        db.session.query(
+            GameResult.user_email.label("email"),
+            func.max(GameResult.score).label("score"),
+            func.max(GameResult.timestamp).label("timestamp")
+        )
+        .group_by(GameResult.user_email)
+        .subquery()
+    )
+
+    rows = (
+        db.session.query(sub.c.email, sub.c.score, sub.c.timestamp, User)
+        .join(User, User.email == sub.c.email, isouter=True)
+        .order_by(sub.c.score.desc())
+        .limit(10)
+        .all()
+    )
+
+    leaderboard = []
+    for email, score, timestamp, user in rows:
+        leaderboard.append({
+            "nickname": user.nickname if user else email,
+            "email": email,
+            "score": score,
+            "timestamp": timestamp
+        })
+
+    return {"leaderboard": leaderboard}
+
+# --- FEEDBACK KAYDET ---
+@app.route("/feedback", methods=["POST"])
+def save_feedback():
+    data = request.get_json() or request.form
+    name = (data.get("name") or "").strip()
+    email = (data.get("email") or "").strip()
+    topic = (data.get("topic") or "").strip()
+    message = (data.get("message") or "").strip()
+
+    if not name or not email or not topic or not message:
+        return {"status": "error", "message": "Eksik bilgi"}, 400
+
+    created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    entry = Feedback(
+        name=name,
+        email=email,
+        topic=topic,
+        message=message,
+        created_at=created_at,
+    )
+    db.session.add(entry)
+    db.session.commit()
+
+    return {"status": "ok"}
+
+# --- FEEDBACK SİL ---
+@app.route("/delete_feedback/<int:feedback_id>", methods=["POST"])
+def delete_feedback(feedback_id):
+    if not session.get("admin_logged_in"):
+        return {"status": "error", "message": "Yetkisiz"}, 401
+    
+    feedback = Feedback.query.get_or_404(feedback_id)
+    db.session.delete(feedback)
+    db.session.commit()
     return {"status": "ok"}
 
 if __name__ == "__main__":

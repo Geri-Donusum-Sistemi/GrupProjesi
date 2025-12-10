@@ -379,12 +379,31 @@ function setLoggedIn(email, nickname) {
     }
 }
 
-function login(email) {
-    const profiles = getProfiles();
-    const nickname = profiles[email]?.nickname;
-    setLoggedIn(email, nickname);
-    updateAuthUI();
-    closeLoginModal();
+async function login(email) {
+    // Önce veritabanında olup olmadığını kontrol et
+    try {
+        const response = await fetch('/check_user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email })
+        });
+        const data = await response.json();
+        
+        if (!data.exists) {
+            alert('Bu hesap bulunamadı. Lütfen önce kayıt olun.');
+            return;
+        }
+        
+        // Kullanıcı varsa giriş yap
+        const profiles = getProfiles();
+        const nickname = profiles[email]?.nickname;
+        setLoggedIn(email, nickname);
+        updateAuthUI();
+        closeLoginModal();
+    } catch (error) {
+        console.error('Giriş hatası:', error);
+        alert('Giriş yapılırken bir hata oluştu.');
+    }
 }
 
 function logout() {
@@ -413,8 +432,34 @@ function updateAuthUI() {
     }
 }
 
+// Kullanıcının veritabanında olup olmadığını kontrol et
+async function checkUserExists() {
+    const email = localStorage.getItem('loggedInEmail');
+    if (!email) return;
+    
+    try {
+        const response = await fetch('/check_user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email })
+        });
+        const data = await response.json();
+        
+        if (!data.exists) {
+            // Kullanıcı silinmiş, çıkış yap
+            logout();
+            alert('Hesabınız silinmiş. Lütfen tekrar kayıt olun.');
+        }
+    } catch (error) {
+        console.error('Kullanıcı kontrolü hatası:', error);
+    }
+}
+
 // Form submit işlemini yakala
 document.addEventListener('DOMContentLoaded', function() {
+    // Sayfa yüklendiğinde kullanıcı kontrolü yap
+    checkUserExists();
+    
     const loginForm = document.querySelector('#loginModal form');
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
@@ -473,6 +518,8 @@ window.onclick = function(event) {
 <div class="nav-with-panel">
         <nav>
         <a href="#neden" id="link-neden" data-i18n="nav-why">Neden Geri Dönüşüm?</a>
+        <a href="#hakkimizda" data-i18n="nav-about">Hakkımızda</a>
+        <a href="/quiz" data-i18n="nav-quiz">Quiz</a>
         <a href="#iletisim" data-i18n="nav-contact">İletişim</a>
         <a href="#ekip" data-i18n="nav-team">Proje Ekibi</a>
     </nav>
@@ -581,6 +628,14 @@ window.onclick = function(event) {
 <!-- Original '#neden' section moved into hover panel above; removed from page flow -->
 
 <!-- 'turler' content moved into hover panel; removed from page flow -->
+
+<div class="container" id="hakkimizda">
+    <h2 data-i18n="about-heading">Hakkımızda</h2>
+    <p data-i18n="about-desc">Geri Dönüşüm Bilgilendirme Sistemi, geri dönüşüm farkındalığını artırmak için hazırlanan bilgilendirici ve etkileşimli bir platformdur. Öğrencilerden gönüllülere kadar herkesin kolayca erişebileceği kaynaklar, quizler ve etkinlikler sunuyoruz.</p>
+    <p><strong data-i18n="about-mission-title">Misyonumuz:</strong> <span data-i18n="about-mission-text">Her bireyin geri dönüşüm konusunda bilinçlenmesini sağlamak ve küçük adımlarla büyük değişikliklerin mümkün olduğunu göstermek.</span></p>
+    <p><strong data-i18n="about-vision-title">Vizyonumuz:</strong> <span data-i18n="about-vision-text">Daha temiz, sürdürülebilir ve çevre dostu bir geleceğe katkı sunmak.</span></p>
+    <p data-i18n="about-action-text">Daha fazlasını keşfetmek ve katkıda bulunmak için içeriklerimize göz atın, etkinliklerimize katılın.</p>
+</div>
 
 <div class="container" id="renkler">
     <h2 data-i18n="bin-colors">Geri Dönüşüm Kutularının Renkleri</h2>
@@ -695,6 +750,50 @@ window.onclick = function(event) {
         <li>Bartuğ Ender – 240307046</li>
     </ul>
 </div>
+
+<section class="feedback-section reveal" id="bize-ulasin">
+    <div class="feedback-grid">
+        <div class="feedback-left">
+            <div class="feedback-label" aria-hidden="true">Bize Ulaşın</div>
+            <h2 data-i18n="feedback-title">Sorun, önerin, fikir verin</h2>
+            <p class="feedback-sub" data-i18n="feedback-subtitle">Mesajınızı bırakın, en kısa sürede geri döneriz.</p>
+            <div class="feedback-info">
+                <div class="feedback-info-row" data-i18n="feedback-address">Ankara, Türkiye</div>
+                <div class="feedback-info-row"><a href="mailto:info@geridosumsistemi.org" data-i18n="feedback-mail">info@geridosumsistemi.org</a></div>
+                <div class="feedback-info-row" data-i18n-html="feedback-instagram-html">
+                    Instagram: <a href="https://www.instagram.com/_enderbartug" target="_blank" rel="noopener">_enderbartug</a> / <a href="https://www.instagram.com/nuri_ozcaan" target="_blank" rel="noopener">nuri_ozcaan</a>
+                </div>
+            </div>
+            <div style="margin-top: 20px; text-align: center;">
+                <img src="/static/images/earthChibi.png" alt="Earth Chibi" style="max-width: 100%; height: auto; max-height: 250px; object-fit: contain;">
+            </div>
+        </div>
+        <div class="feedback-right">
+            <form class="feedback-form" onsubmit="handleFeedbackSubmit(event)">
+                <div class="form-row">
+                    <label data-i18n="feedback-name">Ad Soyad</label>
+                    <input type="text" name="name" placeholder="Ad Soyad" data-i18n-placeholder="feedback-name" required>
+                </div>
+                <div class="form-row">
+                    <label data-i18n="feedback-email">E-posta</label>
+                    <input type="email" name="email" placeholder="E-posta" data-i18n-placeholder="feedback-email" required>
+                </div>
+                <div class="form-row">
+                    <label data-i18n="feedback-topic">Konu</label>
+                    <input type="text" name="topic" placeholder="Konu" data-i18n-placeholder="feedback-topic" required>
+                </div>
+                <div class="form-row">
+                    <label data-i18n="feedback-message">Mesaj</label>
+                    <textarea name="message" rows="4" placeholder="Mesaj" data-i18n-placeholder="feedback-message" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="feedback-btn" data-i18n="feedback-submit">Gönder</button>
+                    <span class="feedback-toast" id="feedbackToast" aria-live="polite"></span>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
 
 <footer>
     <p data-i18n="footer-copyright">© 2025 Geri Dönüşüm Bilgilendirme Sistemi – Tüm hakları saklıdır.</p>
@@ -888,8 +987,17 @@ const translations = {
         "site-title": "Geri Dönüşüm Bilgilendirme Sistemi",
         "site-subtitle": "Çevreyi korumak için küçük adımlar, büyük etkiler.",
         "nav-why": "Neden Geri Dönüşüm?",
+        "nav-about": "Hakkımızda",
+        "nav-quiz": "Quiz",
         "nav-contact": "İletişim",
         "nav-team": "Proje Ekibi",
+        "about-heading": "Hakkımızda",
+        "about-desc": "Geri Dönüşüm Bilgilendirme Sistemi, geri dönüşüm farkındalığını artırmak için hazırlanan bilgilendirici ve etkileşimli bir platformdur. Öğrencilerden gönüllülere kadar herkesin kolayca erişebileceği kaynaklar, quizler ve etkinlikler sunuyoruz.",
+        "about-mission-title": "Misyonumuz:",
+        "about-mission-text": "Her bireyin geri dönüşüm konusunda bilinçlenmesini sağlamak ve küçük adımlarla büyük değişikliklerin mümkün olduğunu göstermek.",
+        "about-vision-title": "Vizyonumuz:",
+        "about-vision-text": "Daha temiz, sürdürülebilir ve çevre dostu bir geleceğe katkı sunmak.",
+        "about-action-text": "Daha fazlasını keşfetmek ve katkıda bulunmak için içeriklerimize göz atın, etkinliklerimize katılın.",
         "why-heading": "Neden Geri Dönüşüm Önemlidir?",
         "why-item1": "Doğal kaynakların daha verimli kullanılmasını sağlar.",
         "why-item2": "Enerji tasarrufu sağlar.",
@@ -901,6 +1009,16 @@ const translations = {
         "bin-colors": "Geri Dönüşüm Kutularının Renkleri",
         "activities": "Faaliyetler",
         "team-desc": "Bu site, Geri Dönüşüm Bilgilendirme Sistemi grup projesi kapsamında hazırlanmıştır.",
+        "feedback-title": "Sorun, önerin, fikir verin",
+        "feedback-subtitle": "Mesajınızı bırakın, en kısa sürede geri döneriz.",
+        "feedback-name": "Ad Soyad",
+        "feedback-email": "E-posta",
+        "feedback-topic": "Konu",
+        "feedback-message": "Mesaj",
+        "feedback-submit": "Gönder",
+        "feedback-address": "Ankara, Türkiye",
+        "feedback-mail": "info@geridosumsistemi.org",
+        "feedback-instagram-html": "Instagram: <a href='https://www.instagram.com/_enderbartug' target='_blank' rel='noopener'>_enderbartug</a> / <a href='https://www.instagram.com/nuri_ozcaan' target='_blank' rel='noopener'>nuri_ozcaan</a>",
         "footer-copyright": "© 2025 Geri Dönüşüm Bilgilendirme Sistemi – Tüm hakları saklıdır.",
         "footer-message": "Doğa için geri dönüştürüyoruz. Çevreyi korumak hepimizin sorumluluğu.",
         "contact": "İletişim",
@@ -955,8 +1073,17 @@ const translations = {
         "site-title": "Recycling Information System",
         "site-subtitle": "Small steps to protect the environment, big impacts.",
         "nav-why": "Why Recycling?",
+        "nav-about": "About",
+        "nav-quiz": "Quiz",
         "nav-contact": "Contact",
         "nav-team": "Project Team",
+        "about-heading": "About",
+        "about-desc": "Recycling Information System is an informative and interactive platform built to raise recycling awareness. We provide resources, quizzes, and events accessible to everyone from students to volunteers.",
+        "about-mission-title": "Our Mission:",
+        "about-mission-text": "Ensure everyone becomes more conscious about recycling and show that small steps can drive big changes.",
+        "about-vision-title": "Our Vision:",
+        "about-vision-text": "Contribute to a cleaner, more sustainable, and eco-friendly future.",
+        "about-action-text": "Explore our content and join our events to learn more and get involved.",
         "why-heading": "Why is Recycling Important?",
         "why-item1": "Enables more efficient use of natural resources.",
         "why-item2": "Provides energy savings.",
@@ -968,6 +1095,16 @@ const translations = {
         "bin-colors": "Colors of Recycling Bins",
         "activities": "Activities",
         "team-desc": "This site was prepared as part of the Recycling Information System group project.",
+        "feedback-title": "Share your thoughts",
+        "feedback-subtitle": "Drop your message and we will reply shortly.",
+        "feedback-name": "Full Name",
+        "feedback-email": "Email",
+        "feedback-topic": "Subject",
+        "feedback-message": "Message",
+        "feedback-submit": "Send",
+        "feedback-address": "Ankara, Turkey",
+        "feedback-mail": "info@geridosumsistemi.org",
+        "feedback-instagram-html": "Instagram: <a href='https://www.instagram.com/_enderbartug' target='_blank' rel='noopener'>_enderbartug</a> / <a href='https://www.instagram.com/nuri_ozcaan' target='_blank' rel='noopener'>nuri_ozcaan</a>",
         "footer-copyright": "© 2025 Recycling Information System – All rights reserved.",
         "footer-message": "We recycle for nature. Protecting the environment is everyone's responsibility.",
         "contact": "Contact",
@@ -1046,6 +1183,13 @@ function switchLanguage(lang) {
         element.innerHTML = translation;
     });
 
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+        const key = element.getAttribute('data-i18n-placeholder');
+        const translation = translations[lang] && translations[lang][key];
+        if (!translation) return;
+        element.placeholder = translation;
+    });
+
     document.documentElement.lang = lang;
 }
 
@@ -1053,6 +1197,57 @@ document.addEventListener('DOMContentLoaded', function() {
     const savedLang = localStorage.getItem('currentLanguage') || 'tr';
     switchLanguage(savedLang);
 });
+
+async function handleFeedbackSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const toast = document.getElementById('feedbackToast');
+    const btn = form.querySelector('.feedback-btn');
+
+    const payload = {
+        name: (form.name?.value || '').trim(),
+        email: (form.email?.value || '').trim(),
+        topic: (form.topic?.value || '').trim(),
+        message: (form.message?.value || '').trim()
+    };
+
+    try {
+        if (btn) {
+            if (!btn.dataset.originalText) btn.dataset.originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Gönderiliyor...';
+        }
+
+        const res = await fetch('/feedback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok || data.status !== 'ok') {
+            throw new Error(data.message || 'Gönderilemedi');
+        }
+
+        if (toast) {
+            toast.textContent = 'Mesajınız alındı';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2200);
+        }
+        form.reset();
+    } catch (err) {
+        if (toast) {
+            toast.textContent = 'Hata: ' + err.message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2600);
+        }
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = btn.dataset.originalText || 'Gönder';
+        }
+    }
+}
 </script>
 
 
