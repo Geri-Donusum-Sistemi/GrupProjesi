@@ -296,11 +296,11 @@ def quiz_leaderboard():
         .subquery()
     )
     
-    # En yüksek skorları olan QuizResult'ları çek
+    # En yüksek skorları olan QuizResult'ları çek (sadece aktif kullanıcılar)
     results = (
         db.session.query(QuizResult, User)
         .join(sub, (QuizResult.user_email == sub.c.email) & (QuizResult.score == sub.c.max_score) & (QuizResult.id == sub.c.min_id))
-        .join(User, User.email == QuizResult.user_email, isouter=True)
+        .join(User, User.email == QuizResult.user_email)
         .order_by(QuizResult.score.desc())
         .limit(10)
         .all()
@@ -357,7 +357,7 @@ def game_leaderboard():
     rows = (
         db.session.query(GameResult, User)
         .join(sub, (GameResult.user_email == sub.c.email) & (GameResult.score == sub.c.max_score) & (GameResult.id == sub.c.min_id))
-        .join(User, User.email == GameResult.user_email, isouter=True)
+        .join(User, User.email == GameResult.user_email)
         .order_by(GameResult.score.desc())
         .limit(10)
         .all()
