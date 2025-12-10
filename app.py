@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, a
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 import os
+import json
 from datetime import timedelta, datetime
 
 app = Flask(__name__)
@@ -12,6 +13,7 @@ app.permanent_session_lifetime = timedelta(minutes=1)
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(basedir, "veritabani.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {"connect_args": {"timeout": 10}}
 
 db = SQLAlchemy(app)
 
@@ -283,8 +285,21 @@ def submit_quiz():
 # --- QUIZ LEADERBOARD (Top 10) ---
 @app.route("/quiz_leaderboard", methods=["GET"])
 def quiz_leaderboard():
+    # Her kullanıcının en yüksek skorlu test sonucunu al (aynı skor varsa ilk birini)
+    sub = (
+        db.session.query(
+            QuizResult.user_email.label("email"),
+            func.max(QuizResult.score).label("max_score"),
+            func.min(QuizResult.id).label("min_id")  # Aynı skor varsa ilk kaydı al
+        )
+        .group_by(QuizResult.user_email)
+        .subquery()
+    )
+    
+    # En yüksek skorları olan QuizResult'ları çek
     results = (
         db.session.query(QuizResult, User)
+        .join(sub, (QuizResult.user_email == sub.c.email) & (QuizResult.score == sub.c.max_score) & (QuizResult.id == sub.c.min_id))
         .join(User, User.email == QuizResult.user_email, isouter=True)
         .order_by(QuizResult.score.desc())
         .limit(10)
@@ -328,32 +343,33 @@ def submit_game():
 # --- GAME LEADERBOARD (Top 10) ---
 @app.route("/game_leaderboard", methods=["GET"])
 def game_leaderboard():
-    # Her kullanıcı için en yüksek skoru çek, skora göre sırala
+    # Her kullanıcının en yüksek skorlu oyun sonucunu al (aynı skor varsa ilk birini)
     sub = (
         db.session.query(
             GameResult.user_email.label("email"),
-            func.max(GameResult.score).label("score"),
-            func.max(GameResult.timestamp).label("timestamp")
+            func.max(GameResult.score).label("max_score"),
+            func.min(GameResult.id).label("min_id")  # Aynı skor varsa ilk kaydı al
         )
         .group_by(GameResult.user_email)
         .subquery()
     )
 
     rows = (
-        db.session.query(sub.c.email, sub.c.score, sub.c.timestamp, User)
-        .join(User, User.email == sub.c.email, isouter=True)
-        .order_by(sub.c.score.desc())
+        db.session.query(GameResult, User)
+        .join(sub, (GameResult.user_email == sub.c.email) & (GameResult.score == sub.c.max_score) & (GameResult.id == sub.c.min_id))
+        .join(User, User.email == GameResult.user_email, isouter=True)
+        .order_by(GameResult.score.desc())
         .limit(10)
         .all()
     )
 
     leaderboard = []
-    for email, score, timestamp, user in rows:
+    for gr, user in rows:
         leaderboard.append({
-            "nickname": user.nickname if user else email,
-            "email": email,
-            "score": score,
-            "timestamp": timestamp
+            "nickname": user.nickname if user else gr.user_email,
+            "email": gr.user_email,
+            "score": gr.score,
+            "timestamp": gr.timestamp
         })
 
     return {"leaderboard": leaderboard}
@@ -379,8 +395,31 @@ def save_feedback():
         message=message,
         created_at=created_at,
     )
-    db.session.add(entry)
-    db.session.commit()
+
+    try:
+        db.session.add(entry)
+        db.session.commit()
+    except Exception as exc:
+        db.session.rollback()
+
+        # Yazma hatasında mesajı yedek dosyaya düşür ki veri kaybolmasın.
+        backup_dir = os.path.join(basedir, "feedback_backups")
+        os.makedirs(backup_dir, exist_ok=True)
+        backup_path = os.path.join(backup_dir, "failed_feedback.jsonl")
+
+        backup_payload = {
+            "name": name,
+            "email": email,
+            "topic": topic,
+            "message": message,
+            "created_at": created_at,
+            "error": str(exc),
+        }
+        with open(backup_path, "a", encoding="utf-8") as fp:
+            fp.write(json.dumps(backup_payload, ensure_ascii=False) + "\n")
+
+        app.logger.error("Feedback kaydedilemedi: %s", exc)
+        return {"status": "error", "message": "Mesaj kaydedilemedi, lütfen tekrar deneyin"}, 500
 
     return {"status": "ok"}
 
