@@ -479,13 +479,21 @@ document.addEventListener('DOMContentLoaded', function() {
             const password = this.querySelector('input[type="password"]').value;
 
             try {
-                await fetch('/signup', {
+                const res = await fetch('/signup', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password, nickname })
                 });
+
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok || data.status !== 'ok') {
+                    alert(data.message || 'Kayıt başarısız');
+                    return;
+                }
             } catch (err) {
                 console.error('Signup kaydı gönderilemedi', err);
+                alert('Kayıt başarısız: ağ hatası');
+                return;
             }
 
             const profiles = getProfiles();

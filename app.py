@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, abort
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 import os
@@ -99,7 +99,7 @@ def bilgi():
     return render_template("bilgi.html")
 
 # --- ADMIN SAYFASI ---
-@app.route("/admin", methods=["GET", "POST"])
+@app.route("/gazozSeverim", methods=["GET", "POST"])
 def admin():
     if request.method == "POST":
         password = request.form.get("password", "")
@@ -135,6 +135,12 @@ def admin():
         })
     
     return render_template("admin.html", show_password_form=False, atiklar=atiklar, user_quiz_data=user_quiz_data, feedbacks=feedbacks)
+
+
+# Eski /admin adresi 404 döndürsün
+@app.route("/admin")
+def admin_hidden():
+    abort(404)
 
 # --- LOGOUT ---
 @app.route("/logout")
@@ -203,13 +209,11 @@ def signup():
 
     existing = User.query.filter_by(email=email).first()
     if existing:
-        existing.password = password
-        existing.nickname = nickname
-        db.session.commit()
-    else:
-        user = User(email=email, password=password, nickname=nickname)
-        db.session.add(user)
-        db.session.commit()
+        return {"status": "error", "message": "Bu e-posta adresi zaten kayıtlı"}, 400
+    
+    user = User(email=email, password=password, nickname=nickname)
+    db.session.add(user)
+    db.session.commit()
 
     return {"status": "ok"}
 
