@@ -432,10 +432,10 @@ function updateAuthUI() {
     }
 }
 
-// Kullanıcının veritabanında olup olmadığını kontrol et
+// Kullanıcının veritabanında olup olmadığını kontrol et (sadece ihtiyaç olduğunda)
 async function checkUserExists() {
     const email = localStorage.getItem('loggedInEmail');
-    if (!email) return;
+    if (!email) return true;
     
     try {
         const response = await fetch('/check_user', {
@@ -449,16 +449,20 @@ async function checkUserExists() {
             // Kullanıcı silinmiş, çıkış yap
             logout();
             alert('Hesabınız silinmiş. Lütfen tekrar kayıt olun.');
+            return false;
         }
+        return true;
     } catch (error) {
         console.error('Kullanıcı kontrolü hatası:', error);
+        // Hata durumunda kullanıcıyı çıkartma
+        return true;
     }
 }
 
 // Form submit işlemini yakala
 document.addEventListener('DOMContentLoaded', function() {
-    // Sayfa yüklendiğinde kullanıcı kontrolü yap
-    checkUserExists();
+    // Sayfa yüklendiğinde kullanıcı kontrolü YAPMA - sadece UI güncelle
+    updateAuthUI();
     
     const loginForm = document.querySelector('#loginModal form');
     if (loginForm) {
